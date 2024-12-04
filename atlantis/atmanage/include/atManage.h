@@ -135,6 +135,7 @@ void Close_Manage_Output_Files(MSEBoxModel *bm);
 /* Record output prototypes */
 void Report_TACs(MSEBoxModel *bm, FILE *llogfp);
 void WriteAnnBrokenStickFile(MSEBoxModel *bm,  int species, int nf, int tier, double FrefLim, double FrefA, double FrefH, double Blim, double BrefA, double BrefB, double FCurr, double FTARG, double Bcurr, double scalar);
+void WriteAnnCapResultFile(MSEBoxModel *bm,  int species, int nf);
 void Write_CPUEreport(MSEBoxModel *bm, int nf, FILE *llogfp, double *tot_alloced);
 void Write_CPUE(MSEBoxModel *bm, FILE *llogfp);
 
