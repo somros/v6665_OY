@@ -35,7 +35,6 @@ static int 		Get_Dynamic_Catch(MSEBoxModel *bm, int guildcase, int chrt, int sta
 static double   Get_Aquaculture_Harvest(MSEBoxModel *bm, int sp, int chrt, int stage, int nf, double Biom, FILE *llogfp);
 static double 	Get_Fishing_Mortality(MSEBoxModel *bm, int sp, int chrt, int stage, int nf, double Biom, double li, int do_debug, FILE *llogfp);
 static double 	Get_Catchability(MSEBoxModel *bm, int sp, int chrt, int stage, int nf);
-static double 	Get_Catch_Selectivity(MSEBoxModel *bm, int sp, int stage, int nf, double li, double *gear_change_scale, int *sel_curve);
 static double 	Get_Positional_Availability(MSEBoxModel *bm, int sp, int nf, int do_debug, FILE *llogfp);
 static double 	Get_addlsm_Scale(MSEBoxModel *bm, int guildcase, int nf, double addlsm, double addsigma, int sel_curve, double li);
 static double 	Get_Swept_Area(MSEBoxModel *bm, int nf, double *gear_change_scale);
