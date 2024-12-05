@@ -799,9 +799,16 @@ void readTACXML(MSEBoxModel *bm, char *fileName, xmlNodePtr rootnode) {
     if(    Util_XML_Read_Array_Double(ATLANTIS_ATTRIBUTE, fileName, "TAC_Parameters/Reference_Points",childGroupingNode, no_checking, "FrefLim", &FrefLimi, bm->K_num_tot_sp) == FALSE){
         quit("Error: Unable to find parameter 'TAC_Parameters/Reference_Points/FrefLim' in input file %s\n",  fileName);
     }
+	
     if(	Util_XML_Read_Array_Double(ATLANTIS_ATTRIBUTE, fileName, "TAC_Parameters/Reference_Points",childGroupingNode, no_checking, "Frestart_scalar", &FreStarti, bm->K_num_tot_sp) == FALSE){
         quit("Error: Unable to find parameter 'TAC_Parameters/Reference_Points/Frestart_scalar' in input file %s\n",  fileName);
     }
+
+
+	childGroupingNode = Util_XML_Get_Node(ATLANTIS_ATTRIBUTE_SUB_GROUP, rootnode, "SystemCap_Parameters");
+	if (childGroupingNode == NULL)
+		quit("readTACXML: SystemCap_Parameters attribute group not found in input file %s.\n", fileName);
+
     if( Util_XML_Read_Array_Double(ATLANTIS_ATTRIBUTE, fileName, "SystemCap_Parameters/",childGroupingNode, no_checking, "FlagSystCapSP", &FlagSystCapSPi, bm->K_num_tot_sp) == FALSE){
         quit("Error: Unable to find parameter 'SystemCap_Parameters/FlagSystCapSP' in input file %s\n",  fileName);
     }
