@@ -1252,10 +1252,10 @@ void Free_Functional_Group_Memory(MSEBoxModel *bm) {
 			free4d(FunctGroupArray[i].boxPopRatio);
 			free1d(FunctGroupArray[i].min_wgt);
             free1d(FunctGroupArray[i].max_wgt);
-            free1d(FunctGroupArray[i].rolling_wgt);
+            free2d(FunctGroupArray[i].rolling_wgt);
             free1d(FunctGroupArray[i].min_B);
             free1d(FunctGroupArray[i].max_B);
-            free1d(FunctGroupArray[i].rolling_B);
+            free2d(FunctGroupArray[i].rolling_B);
 
 			break;
 		case AGE_STRUCTURED_BIOMASS:
@@ -1270,6 +1270,8 @@ void Free_Functional_Group_Memory(MSEBoxModel *bm) {
 			free1d(FunctGroupArray[i].FSPB);
             free1d(FunctGroupArray[i].scaled_FSPB);
             free1d(FunctGroupArray[i].X_RS);
+			free2d(FunctGroupArray[i].rolling_B);
+
 			break;
 		case BIOMASS:
 			free2d(FunctGroupArray[i].cohortSpeciesParams);
@@ -1277,6 +1279,8 @@ void Free_Functional_Group_Memory(MSEBoxModel *bm) {
                 free2d(FunctGroupArray[i].spawnSpeciesParams);
             free3d(FunctGroupArray[i].pSPEat);
             free1d(FunctGroupArray[i].X_RS);
+			free2d(FunctGroupArray[i].rolling_B);
+
 			break;
 		}
 
