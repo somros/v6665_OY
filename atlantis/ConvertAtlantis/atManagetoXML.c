@@ -703,7 +703,9 @@ void TACXML(MSEBoxModel *bm, FILE *fp, char *fileName, xmlDocPtr doc, xmlNodePtr
 
     Util_XML_Create_Node_Next_Line(fp, fileName, childGroupingNode, "Fref_High", "Fishing rate (F) that equates with BrefA (i.e.F to apply if B > Bref)", "", XML_TYPE_FLOAT);
     
-    Util_XML_Create_Node_Next_Line(fp, fileName, childGroupingNode, "Frestart_scalar", "Scalar on original mFC that becomes the new F after fishery reopened", "", XML_TYPE_FLOAT);
+    Util_XML_Create_Node_Next_Line(fp, fileName, childGroupingNode, "FrefLim", "Fishing rate (F) that is the F once the stocks statis is below Blim", "", XML_TYPE_FLOAT);
+	
+	Util_XML_Create_Node_Next_Line(fp, fileName, childGroupingNode, "Frestart_scalar", "Scalar on original mFC that becomes the new F after fishery reopened", "", XML_TYPE_FLOAT);
     
 	childGroupingNode = Util_XML_Create_Node(ATLANTIS_ATTRIBUTE_SUB_GROUP, rootnode, "SystemCap_Parameters",
             "Settingd for system cap related management", "", "");

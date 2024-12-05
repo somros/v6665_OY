@@ -147,19 +147,19 @@ FILE * initAnnBrokenStickFile(MSEBoxModel *bm)
 
     /** Column definitions **/
     fprintf(fid,"Time ");
-
     fprintf(fid,"SpeciesName ");
-
     fprintf(fid,"FisheryName ");
-
-    fprintf(fid, "FCurr ");
-
-    fprintf(fid, "FTARG ");
-
+    fprintf(fid,"Tier ");
+    fprintf(fid,"FrefLim ");
+    fprintf(fid,"FrefA ");
+    fprintf(fid,"FrefH ");
+    fprintf(fid,"Blim ");
+    fprintf(fid,"BrefB ");
+    fprintf(fid,"BrefA ");
+    fprintf(fid,"FCurr ");
+    fprintf(fid,"FTARG ");
     fprintf(fid,"CurrentBiomass ");
-
     fprintf(fid,"BrokenStickScaler ");
-
 	fprintf(fid,"\n");
     /* Return file pointer */
     return(fid);
