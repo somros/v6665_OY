@@ -1569,6 +1569,8 @@ void Ecosystem_Cap_Frescale(MSEBoxModel *bm, FILE *llogfp) {
                 /* Use inverse weights to attribute a share of the excess to each stock */
                 w_inv = 1.0 / sp_fishery_pref_weight;
                 tot_w_inv += w_inv;
+
+                fprintf(llogfp, "OY DEBUG 1: Time: %e %s sp_fishery_pref_weight: %e, w_inv: %e, tot_w_inv: %e\n", bm->dayt, FunctGroupArray[sp].groupCode, sp_fishery_pref_weight, w_inv, tot_w_inv);
             }
         }
 
@@ -1584,6 +1586,9 @@ void Ecosystem_Cap_Frescale(MSEBoxModel *bm, FILE *llogfp) {
                 w_inv = 1.0 / sp_fishery_pref_weight;
                 FunctGroupArray[sp].speciesParams[sp_fishery_pref_norm_id] = w_inv / tot_w_inv;
             }
+
+            fprintf(llogfp, "OY DEBUG 2: Time: %e %s sp_fishery_pref_weight: %e, w_inv: %e, norm_weight: %e\n", bm->dayt, FunctGroupArray[sp].groupCode, sp_fishery_pref_weight, w_inv, FunctGroupArray[sp].speciesParams[sp_fishery_pref_norm_id]);
+
         }
         bm->sp_pref_inv_norm_done = 1;
     }
@@ -1605,6 +1610,9 @@ void Ecosystem_Cap_Frescale(MSEBoxModel *bm, FILE *llogfp) {
         } else {
             bm->FISHERYprms[nf][mpascale_cap_id] = 1.0;
         }
+
+        fprintf(llogfp, "OY DEBUG 3: Time: %e %s mpascale_cap_id: %e\n", bm->dayt, FisheryArray[nf].fisheryCode, bm->FISHERYprms[nf][mpascale_cap_id]);
+
             
     }
 
@@ -1686,6 +1694,9 @@ void Ecosystem_Cap_Frescale(MSEBoxModel *bm, FILE *llogfp) {
             Fcurr = calcF;
             
             fprintf(llogfp, "Time: %e %s has Fcurr %e\n", bm->dayt, FunctGroupArray[sp].groupCode, Fcurr);
+
+            fprintf(llogfp, "OY DEBUG 4: Time: %e %s Braw: %e, Bcurr: %e, Fcurr: %e, max_mFC: %e\n", bm->dayt, FunctGroupArray[sp].groupCode, Braw, Bcurr, Fcurr, max_mFC);
+
             
             switch (tier) {
                 case tier0: // Intentional flow throgh for all these cases
@@ -1761,6 +1772,9 @@ void Ecosystem_Cap_Frescale(MSEBoxModel *bm, FILE *llogfp) {
                     break;
             }
 
+            fprintf(llogfp, "OY DEBUG 5: Time: %e %s FTARG: %e, FrefA: %e, Fcurr: %e, Bcurr: %e, Blim: %e\n", bm->dayt, FunctGroupArray[sp].groupCode, FTARG, FrefA, Fcurr, Fcurr, Bcurr, Blim);
+
+
             /* Rescale all F accordingly to be in line with single species expectations - basically F to deliver the Acceptable Biological Catch */
             if(!Fcurr && FTARG) {
                 F_rescale = FunctGroupArray[sp].speciesParams[F_restart_id];
@@ -1798,6 +1812,8 @@ void Ecosystem_Cap_Frescale(MSEBoxModel *bm, FILE *llogfp) {
                         break;
                 }
             }
+
+            fprintf(llogfp, "OY DEBUG 6: Time: %e %s this_mFC: %e, Fstep1: %e, F_rescale: %e, FTARG: %e, Fcurr: %e)\n", bm->dayt, FunctGroupArray[sp].groupCode, this_mFC, Fstep1, F_rescale, FTARG, Fcurr);
             
             if (bm->checkstart) {
                 fprintf(llogfp, "Time: %e %s F_rescale: %e, FTARG: %e, Fcurr: %e)\n", bm->dayt, FunctGroupArray[sp].groupCode, F_rescale, FTARG, Fcurr);
@@ -1848,6 +1864,8 @@ void Ecosystem_Cap_Frescale(MSEBoxModel *bm, FILE *llogfp) {
                         if (mpa_infringe > mpa_scale)
                             mpa_scale = mpa_infringe;
                     }
+
+                    fprintf(llogfp, "OY DEBUG 7: Time: %e %s %s mFC: %e, mpa_scale: %e, mFC_change_scale: %e\n", bm->dayt, FunctGroupArray[sp].groupCode, FisheryArray[nf].fisheryCode, mFC, mpa_scale, mFC_change_scale);
 
                     sel_curve = (int) (bm->FISHERYprms[nf][selcurve_id]);
                     FunctGroupArray[sp].speciesParams[sp_fishery_expected_catch_id] = 0;
@@ -1947,6 +1965,8 @@ void Ecosystem_Cap_Frescale(MSEBoxModel *bm, FILE *llogfp) {
                             expectF = mFC * mpa_scale * mFC_change_scale * sel;
                             Catch_Eqn_Denom = expectF + calcM;
                             survival = 1.0 - exp(-1.0 * Catch_Eqn_Denom);
+
+                            fprintf(llogfp, "OY DEBUG 8: Time: %e %s-%d %s, expectF: %e, mFC: %e, mpa_scale: %e, mFC_change_scale: %e, sel: %e, calcM: %e, Catch_Eqn_Denom: %e, survival: %e\n", bm->dayt, FunctGroupArray[sp].groupCode, FisheryArray[nf].fisheryCode, nc, expectF, mFC, mpa_scale, mFC_change_scale, sel, calcM, Catch_Eqn_Denom, survival);
                             
                             // Assume all stocks and genetypes being pooled to get the Numbers at age
                             // TODO: Do per Stock and geneotype separately
@@ -1982,6 +2002,9 @@ void Ecosystem_Cap_Frescale(MSEBoxModel *bm, FILE *llogfp) {
                             tot_expect_catch += this_expect_catch;
                         }
                         FunctGroupArray[sp].speciesParams[sp_fishery_expected_catch_id] += this_expect_catch;
+
+                        fprintf(llogfp, "OY DEBUG 9: Time: %e %s-%d %s, this_Biom: %e, this_expect_catch: %e, tot_expect_catch: %e\n", bm->dayt, FunctGroupArray[sp].groupCode, FisheryArray[nf].fisheryCode, nc, this_Biom * bm->X_CN * mg_2_tonne, this_expect_catch, tot_expect_catch);
+
                     }
                 }
             }
@@ -1991,6 +2014,8 @@ void Ecosystem_Cap_Frescale(MSEBoxModel *bm, FILE *llogfp) {
     /* Compare tot_expect_catch vs the total system expected catch - if in excess then rescale using preferential weighting */
     if (tot_expect_catch > bm->Ecosystm_Cap_tonnes ) {
         excess = tot_expect_catch - bm->Ecosystm_Cap_tonnes;
+
+        fprintf(llogfp, "OY DEBUG 10: Time: %e Ecosystm_Cap_tonnes: %e, tot_expect_catch, %e, excess: %e\n", bm->dayt, bm->Ecosystm_Cap_tonnes, tot_expect_catch, excess);
         
         for (sp = 0; sp < bm->K_num_tot_sp; sp++) {
             if (FunctGroupArray[sp].isFished == TRUE) {
@@ -2009,6 +2034,8 @@ void Ecosystem_Cap_Frescale(MSEBoxModel *bm, FILE *llogfp) {
                     for (nf = 0; nf < bm->K_num_fisheries; nf++) {
                         bm->SP_FISHERYprms[sp][nf][orig_mFC_scale_id] = bm->SP_FISHERYprms[sp][nf][mFC_scale_id]; // For reporting purposes
                         bm->SP_FISHERYprms[sp][nf][mFC_scale_id] *= rescale_scalar;
+
+                        fprintf(llogfp, "OY DEBUG 11: Time: %e %s %s, deductions: %e, orig_expected_catch: %e, new_expected_catch: %e, rescale_scalar: %e, orig_F_rescale: %e, new_F_rescale: %e\n", bm->dayt, FunctGroupArray[sp].groupCode, FisheryArray[nf].fisheryCode, deductions, orig_expected_catch, new_expected_catch, rescale_scalar, bm->SP_FISHERYprms[sp][nf][orig_mFC_scale_id], bm->SP_FISHERYprms[sp][nf][mFC_scale_id]);
                     }
                 }
             }
