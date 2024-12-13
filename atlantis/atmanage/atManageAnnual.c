@@ -1585,10 +1585,10 @@ void Ecosystem_Cap_Frescale(MSEBoxModel *bm, FILE *llogfp) {
                 sp_fishery_pref_weight = FunctGroupArray[sp].speciesParams[sp_fishery_pref_id];
                 w_inv = 1.0 / sp_fishery_pref_weight;
                 FunctGroupArray[sp].speciesParams[sp_fishery_pref_norm_id] = w_inv / tot_w_inv;
+
+                fprintf(llogfp, "OY DEBUG 2: Time: %e %s sp_fishery_pref_weight: %e, w_inv: %e, norm_weight: %e\n", bm->dayt, FunctGroupArray[sp].groupCode, sp_fishery_pref_weight, w_inv, FunctGroupArray[sp].speciesParams[sp_fishery_pref_norm_id]);
+
             }
-
-            fprintf(llogfp, "OY DEBUG 2: Time: %e %s sp_fishery_pref_weight: %e, w_inv: %e, norm_weight: %e\n", bm->dayt, FunctGroupArray[sp].groupCode, sp_fishery_pref_weight, w_inv, FunctGroupArray[sp].speciesParams[sp_fishery_pref_norm_id]);
-
         }
         bm->sp_pref_inv_norm_done = 1;
     }
