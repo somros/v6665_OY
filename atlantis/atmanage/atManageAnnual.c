@@ -1614,7 +1614,7 @@ void Ecosystem_Cap_Frescale(MSEBoxModel *bm, FILE *llogfp) {
         }
 
         fprintf(llogfp, "CHECKPOINT 3\n");
-        fprintf(llogfp, "OY DEBUG 3: Time: %e %s mpascale_cap_id: %e\n", bm->dayt, FisheryArray[nf].fisheryCode, bm->FISHERYprms[nf][mpascale_cap_id]);
+        //fprintf(llogfp, "OY DEBUG 3: Time: %e %s mpascale_cap_id: %e\n", bm->dayt, FisheryArray[nf].fisheryCode, bm->FISHERYprms[nf][mpascale_cap_id]);
 
             
     }
