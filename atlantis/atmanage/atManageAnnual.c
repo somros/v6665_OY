@@ -1777,7 +1777,7 @@ void Ecosystem_Cap_Frescale(MSEBoxModel *bm, FILE *llogfp) {
             }
 
             //fprintf(llogfp, "CHECKPOINT 5\n");
-            fprintf(llogfp, "OY DEBUG 5: Time: %e %s FTARG: %e, FrefA: %e, Fcurr: %e, Bcurr: %e, Blim: %e\n", bm->dayt, FunctGroupArray[sp].groupCode, FTARG, FrefA, Fcurr, Fcurr, Bcurr, Blim);
+            fprintf(llogfp, "OY DEBUG 5: Time: %e %s FTARG: %e, FrefA: %e, Fcurr: %e, Bcurr: %e, Blim: %e\n", bm->dayt, FunctGroupArray[sp].groupCode, FTARG, FrefA, Fcurr, Bcurr, Blim);
 
 
             /* Rescale all F accordingly to be in line with single species expectations - basically F to deliver the Acceptable Biological Catch */
@@ -1819,7 +1819,7 @@ void Ecosystem_Cap_Frescale(MSEBoxModel *bm, FILE *llogfp) {
             }
 
             //fprintf(llogfp, "CHECKPOINT 6\n");
-            fprintf(llogfp, "OY DEBUG 6: Time: %e %s this_mFC: %e, Fstep1: %e, F_rescale: %e, FTARG: %e, Fcurr: %e)\n", bm->dayt, FunctGroupArray[sp].groupCode, this_mFC, Fstep1, F_rescale, FTARG, Fcurr);
+            fprintf(llogfp, "OY DEBUG 6: Time: %e %s, Fstep1: %e, F_rescale: %e, FTARG: %e, Fcurr: %e)\n", bm->dayt, FunctGroupArray[sp].groupCode, Fstep1, F_rescale, FTARG, Fcurr);
             
             if (bm->checkstart) {
                 fprintf(llogfp, "Time: %e %s F_rescale: %e, FTARG: %e, Fcurr: %e)\n", bm->dayt, FunctGroupArray[sp].groupCode, F_rescale, FTARG, Fcurr);
@@ -1915,6 +1915,9 @@ void Ecosystem_Cap_Frescale(MSEBoxModel *bm, FILE *llogfp) {
                                 if((basechrt < mFC_start_age) || (basechrt >= mFC_end_age))
                                 /* Actually too young to be caught so don't apply the mortality here */
                                     mFC = 0;
+
+                                fprintf(llogfp, "OY DEBUG 7.1: Time: %e %s-%d %s, basechrt: %d, mFC_start_age: %d, mFC_start_age: %d, mFC: %e\n", bm->dayt, FunctGroupArray[sp].groupCode, nc, FisheryArray[nf].fisheryCode, basechrt, mFC_start_age, mFC_start_age, mFC);
+
                             }
                         }
                         
