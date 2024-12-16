@@ -1878,6 +1878,8 @@ void Ecosystem_Cap_Frescale(MSEBoxModel *bm, FILE *llogfp) {
                     FunctGroupArray[sp].speciesParams[sp_fishery_expected_catch_id] = 0;
                     for (nc = 0; nc < FunctGroupArray[sp].numCohortsXnumGenes; nc++) {
                         basechrt = nc / FunctGroupArray[sp].numGeneTypes;
+
+                        fprintf(llogfp, "OY DEBUG 7.1: Time: %e %s-%d %s, basechrt: %d, mFC: %e\n", bm->dayt, FunctGroupArray[sp].groupCode, nc, FisheryArray[nf].fisheryCode, basechrt, mFC);
                         
                         /* Convert model weight (mg AFDSW) into g wet weight and then length in cm */
                         if (FunctGroupArray[sp].isVertebrate == TRUE) {
@@ -1899,6 +1901,8 @@ void Ecosystem_Cap_Frescale(MSEBoxModel *bm, FILE *llogfp) {
                             Wgt = 1.0;
                             li = Ecology_Get_Size(bm, sp, Wgt, nc);
                         }
+
+                        fprintf(llogfp, "OY DEBUG 7.2: Time: %e %s-%d %s, basechrt: %d, Wgt: %d, li: %e, mFC: %e\n", bm->dayt, FunctGroupArray[sp].groupCode, nc, FisheryArray[nf].fisheryCode, Wgt, li, mFC);
                         
                         stage = FunctGroupArray[sp].cohort_stage[nc];
                         /* In the case where using selectivity to determine which ages suffer the fishing mortality */
@@ -1915,11 +1919,10 @@ void Ecosystem_Cap_Frescale(MSEBoxModel *bm, FILE *llogfp) {
                                 if((basechrt < mFC_start_age) || (basechrt >= mFC_end_age))
                                 /* Actually too young to be caught so don't apply the mortality here */
                                     mFC = 0;
-
-                                fprintf(llogfp, "OY DEBUG 7.1: Time: %e %s-%d %s, basechrt: %d, mFC_start_age: %d, mFC_start_age: %d, mFC: %e\n", bm->dayt, FunctGroupArray[sp].groupCode, nc, FisheryArray[nf].fisheryCode, basechrt, mFC_start_age, mFC_start_age, mFC);
-
                             }
                         }
+
+                        fprintf(llogfp, "OY DEBUG 7.3: Time: %e %s-%d %s, basechrt: %d, sel: %e, mFC_start_age: %d, mFC_end_age: %d, mFC: %e\n", bm->dayt, FunctGroupArray[sp].groupCode, nc, FisheryArray[nf].fisheryCode, basechrt, sel, mFC_end_age, mFC_start_age, mFC);
                         
                         /* Find what the predicted catch would be by applying fishing mortality */
                         if (!bm->syst_cap_calc_method) {
