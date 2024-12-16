@@ -1918,11 +1918,11 @@ void Ecosystem_Cap_Frescale(MSEBoxModel *bm, FILE *llogfp) {
                             if(FunctGroupArray[sp].isVertebrate == TRUE || FunctGroupArray[sp].groupAgeType == AGE_STRUCTURED_BIOMASS){
                                 if((basechrt < mFC_start_age) || (basechrt >= mFC_end_age))
                                 /* Actually too young to be caught so don't apply the mortality here */
-                                    mFC = 0;
+                                    sel = 0.0;
                             }
                         }
 
-                        fprintf(llogfp, "OY DEBUG 7.3: Time: %e %s-%d %s, basechrt: %d, sel: %e, mFC_start_age: %d, mFC_end_age: %d, mFC: %e\n", bm->dayt, FunctGroupArray[sp].groupCode, nc, FisheryArray[nf].fisheryCode, basechrt, sel, mFC_end_age, mFC_start_age, mFC);
+                        fprintf(llogfp, "OY DEBUG 7.3: Time: %e %s-%d %s, basechrt: %d, sel: %e, mFC_start_age: %d, mFC_end_age: %d, mFC: %e\n", bm->dayt, FunctGroupArray[sp].groupCode, nc, FisheryArray[nf].fisheryCode, basechrt, sel, mFC_start_age, mFC_end_age, mFC);
                         
                         /* Find what the predicted catch would be by applying fishing mortality */
                         if (!bm->syst_cap_calc_method) {
