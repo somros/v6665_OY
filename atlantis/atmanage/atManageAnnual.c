@@ -1902,7 +1902,7 @@ void Ecosystem_Cap_Frescale(MSEBoxModel *bm, FILE *llogfp) {
                             li = Ecology_Get_Size(bm, sp, Wgt, nc);
                         }
 
-                        fprintf(llogfp, "OY DEBUG 7.2: Time: %e %s-%d %s, basechrt: %d, Wgt: %d, li: %e, mFC: %e\n", bm->dayt, FunctGroupArray[sp].groupCode, nc, FisheryArray[nf].fisheryCode, Wgt, li, mFC);
+                        fprintf(llogfp, "OY DEBUG 7.2: Time: %e %s-%d %s, basechrt: %d, Wgt: %e, li: %e, mFC: %e\n", bm->dayt, FunctGroupArray[sp].groupCode, nc, FisheryArray[nf].fisheryCode, Wgt, li, mFC);
                         
                         stage = FunctGroupArray[sp].cohort_stage[nc];
                         /* In the case where using selectivity to determine which ages suffer the fishing mortality */
@@ -1999,6 +1999,8 @@ void Ecosystem_Cap_Frescale(MSEBoxModel *bm, FILE *llogfp) {
                                 }
                                 this_expect_catch = this_Biom * (expectF / Catch_Eqn_Denom) * survival;
                                 tot_expect_catch += this_expect_catch;
+
+                                fprintf(llogfp, "OY DEBUG 8.1: Time: %e %s-%d %s, this_Num: %e, Wgt: %e, this_Biom: %e\n", bm->dayt, FunctGroupArray[sp].groupCode, nc, FisheryArray[nf].fisheryCode, this_Num, Wgt, this_Biom);
                             }
                         } else {
                             if (!bm->use_time_avg_biom) {
