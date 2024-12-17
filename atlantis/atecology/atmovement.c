@@ -144,6 +144,9 @@
 #include "atecology.h"
 #include <atHarvestLib.h>
 
+/* Prototypes */
+void Store_Min_Max_Avg(MSEBoxModel *bm, int sp);
+
 static double Calculate_Migration_Proportion(MSEBoxModel *bm, FILE *llogfp, double dt, int sp, double start, double period, double IOBox){
 	double migtime2;
 	double migtemp = dt/86400.0;
@@ -1311,6 +1314,11 @@ void Ecology_Total_Verts_And_Migration(MSEBoxModel *bm, double dt, FILE *llogfp)
 			/* Skip over groups not in the model */
 			if (!flagsp)
 				continue;
+
+            /* Store diagnostics if needed for system cap calculations */
+            if(bm->do_syst_cap) {
+                Store_Min_Max_Avg(bm, sp);
+            }
 
 			/* if a group doesn't move vertically or horizontally then skip */
 			if(FunctGroupArray[sp].isMobile == FALSE && FunctGroupArray[sp].sp_geo_move == FALSE)
@@ -3186,6 +3194,10 @@ void Ecology_Invert_Migration(MSEBoxModel *bm, double dt, FILE *llogfp) {
                 }
             }
 
+            /* Store diagnostics if needed for system cap calculations */
+            if(bm->do_syst_cap) {
+                Store_Min_Max_Avg(bm, sp);
+            }
             
             for (cohort = 0; cohort < FunctGroupArray[fgIndex].numCohortsXnumGenes; cohort++) {
                 /** Do any horizontal movement necessary **/

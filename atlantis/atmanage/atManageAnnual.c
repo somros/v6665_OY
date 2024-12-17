@@ -1891,6 +1891,9 @@ void Ecosystem_Cap_Frescale(MSEBoxModel *bm, FILE *llogfp) {
                                     quit("Ecosystem_Cap_Frescale: Time %e max_wgt for %s-%d is smaller than is feasible (%e) something has gone wrong\n", bm->dayt, FunctGroupArray[sp].groupCode, nc, FunctGroupArray[sp].max_wgt[nc]);
                                 }
                                 Wgt = (FunctGroupArray[sp].min_wgt[nc] + FunctGroupArray[sp].max_wgt[nc]) / 2.0;
+                        
+                                fprintf(llogfp, "OY DEBUG OY 7.1.1: Time: %e %s-%d %s, basechrt: %d, Wgt: %e, min_wgt: %e, max_wgt: %e\n", bm->dayt, FunctGroupArray[sp].groupCode, nc, FisheryArray[nf].fisheryCode, basechrt, Wgt, FunctGroupArray[sp].min_wgt[nc], FunctGroupArray[sp].max_wgt[nc]);
+
                             } else {
                                 Wgt = FunctGroupArray[sp].rolling_wgt[nc][bm->K_rolling_cap_num];
                             }
@@ -1902,7 +1905,7 @@ void Ecosystem_Cap_Frescale(MSEBoxModel *bm, FILE *llogfp) {
                             li = Ecology_Get_Size(bm, sp, Wgt, nc);
                         }
 
-                        fprintf(llogfp, "OY DEBUG 7.2: Time: %e %s-%d %s, basechrt: %d, Wgt: %e, li: %e, mFC: %e\n", bm->dayt, FunctGroupArray[sp].groupCode, nc, FisheryArray[nf].fisheryCode, Wgt, li, mFC);
+                        fprintf(llogfp, "OY DEBUG 7.2: Time: %e %s-%d %s, basechrt: %d, Wgt: %e, li: %e, mFC: %e\n", bm->dayt, FunctGroupArray[sp].groupCode, nc, FisheryArray[nf].fisheryCode, basechrt, Wgt, li, mFC);
                         
                         stage = FunctGroupArray[sp].cohort_stage[nc];
                         /* In the case where using selectivity to determine which ages suffer the fishing mortality */
