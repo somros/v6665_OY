@@ -382,9 +382,15 @@ void ManamentFlagTimeXML(MSEBoxModel *bm, FILE *fp, char *fileName, xmlDocPtr do
 
 	// Needed in defining arrays so read in immediately - use K_rolling_cap_num to define size of the array assumign monthly updates
     bm->K_cap_rolling_period = (Util_XML_Read_Value(fileName, ATLANTIS_ATTRIBUTE,  bm->ecotest, 1, groupingNode, no_checking, "K_cap_rolling_period"));
+	printf("Albi Debug: K_cap_rolling_period = %f\n", bm->K_cap_rolling_period);
+    fflush(stdout);
     bm->K_rolling_cap_num = (int)(ceil(bm->K_cap_rolling_period * 12.0));
+	printf("Debug: K_rolling_cap_num after calculation = %d\n", bm->K_rolling_cap_num);
+    fflush(stdout);
     if(!bm->K_rolling_cap_num) {
         bm->K_rolling_cap_num = 1;
+		printf("Debug: K_rolling_cap_num set to 1 after zero check\n");
+        fflush(stdout);
     }
 
 	Util_XML_Parse_Create_Node(fp, fileName, groupingNode, "dynDAS", "Dynamic Days at Sea flag.", "", XML_TYPE_BOOLEAN,"0");
