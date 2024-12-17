@@ -392,6 +392,8 @@ void ManamentFlagTimeXML(MSEBoxModel *bm, FILE *fp, char *fileName, xmlDocPtr do
 		printf("Debug: K_rolling_cap_num set to 1 after zero check\n");
         fflush(stdout);
     }
+	printf("Albi Debug: After initial calc - K_rolling_cap_num = %d\n", bm->K_rolling_cap_num);
+    fflush(stdout);
 
 	Util_XML_Parse_Create_Node(fp, fileName, groupingNode, "dynDAS", "Dynamic Days at Sea flag.", "", XML_TYPE_BOOLEAN,"0");
 
