@@ -741,6 +741,13 @@ void Store_Min_Max_Avg(MSEBoxModel *bm, int sp) {
                 /* And now the rollign values - Iterate the list and get new values */
                 this_sum_W = 0.0;
                 this_sum_B = 0.0;
+
+                printf("Debug: sp=%d, n=%d, rolling_cap_initialised=%p\n", 
+                       sp, n, bm->rolling_cap_initialised);
+                fflush(stdout);
+                printf("Debug: value at [%d][%d] = %d\n", sp, n, bm->rolling_cap_initialised[sp][n]);
+                fflush(stdout);
+
                 if (!bm->rolling_cap_initialised[sp][n]) { // Initialise if the first time through
                     for ( nlist = 0; nlist < bm->K_rolling_cap_num; nlist++) {
                         FunctGroupArray[sp].rolling_wgt[n][nlist] = this_wgt;
