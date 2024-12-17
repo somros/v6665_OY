@@ -2423,6 +2423,7 @@ void modelshutdown(MSEBoxModel *bm) {
 	i_free1d(bm->tsMPAid);
 	i_free2d(bm->pSPcheck);
 	i_free2d(bm->sp_basket);
+	i_free2d(bm->rolling_cap_initialised);
 
 	i_free3d(bm->TAC_over);
 

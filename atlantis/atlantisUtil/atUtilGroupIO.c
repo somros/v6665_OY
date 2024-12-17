@@ -823,7 +823,13 @@ int Util_Read_Functional_Group_XML(MSEBoxModel *bm, char *fileName, FILE *llogfp
 
 			FunctGroupArray[i].min_wgt = Util_Alloc_Init_1D_Double(FunctGroupArray[i].numCohortsXnumGenes, 0.0);
             FunctGroupArray[i].max_wgt = Util_Alloc_Init_1D_Double(FunctGroupArray[i].numCohortsXnumGenes, 0.0);
-            FunctGroupArray[i].rolling_wgt = Util_Alloc_Init_2D_Double(bm->K_rolling_cap_num + 1, FunctGroupArray[i].numCohortsXnumGenes, 0.0);
+
+			printf("Albi Debug: Allocating rolling_wgt for sp=%d with dims: [%d][%d], K_rolling_cap_num=%d, numCohortsXnumGenes=%d\n",
+            i, bm->K_rolling_cap_num + 1, FunctGroupArray[i].numCohortsXnumGenes, 
+            bm->K_rolling_cap_num, FunctGroupArray[i].numCohortsXnumGenes);
+            fflush(stdout);
+
+            FunctGroupArray[i].rolling_wgt = Util_Alloc_Init_2D_Double(FunctGroupArray[i].numCohortsXnumGenes, bm->K_rolling_cap_num + 1, 0.0);
             FunctGroupArray[i].min_B = Util_Alloc_Init_1D_Double(FunctGroupArray[i].numCohortsXnumGenes, 0.0);
             FunctGroupArray[i].max_B = Util_Alloc_Init_1D_Double(FunctGroupArray[i].numCohortsXnumGenes, 0.0);
             FunctGroupArray[i].rolling_B = Util_Alloc_Init_2D_Double(bm->K_rolling_cap_num + 1, FunctGroupArray[i].numCohortsXnumGenes, 0.0);
