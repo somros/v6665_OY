@@ -1267,12 +1267,12 @@ void Allocate_Arrays_Post_Load(MSEBoxModel *bm) {
 
 	bm->TAC_over = Util_Alloc_Init_3D_Int(bm->K_num_basket, bm->K_num_fisheries, bm->K_num_tot_sp, 0);
 	bm->rolling_cap_initialised = Util_Alloc_Init_2D_Int((bm->K_num_max_cohort * bm->K_num_max_genetypes), bm->K_num_tot_sp, 0);
-	
+
 	printf("ALBI Debug: rolling_cap_initialised allocated with dims [%d][%d], pointer=%p\n", 
-        bm->K_num_tot_sp, 
-        (bm->K_num_max_cohort * bm->K_num_max_genetypes), 
-        (void*)bm->rolling_cap_initialised);
-    
+       bm->K_num_tot_sp, 
+       (bm->K_num_max_cohort * bm->K_num_max_genetypes), 
+       (void*)bm->rolling_cap_initialised);
+
 	if(bm->useRBCTiers)
 		Open_Tiered_Output_File(bm);
 }
