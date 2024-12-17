@@ -1255,8 +1255,6 @@ void Allocate_Arrays_Pre_Load(MSEBoxModel *bm) {
 	MPAoverfishedlist = Util_Alloc_Init_2D_Double(bm->K_num_tot_sp, bm->nbox, 1.0);
 
 	origEffort_vdistrib = Util_Alloc_Init_2D_Double(bm->wcnz, bm->K_num_fisheries, 0.0);
-
-	bm->rolling_cap_initialised = Util_Alloc_Init_2D_Int(bm->K_num_tot_sp, (bm->K_num_max_cohort * bm->K_num_max_genetypes), 0);
     
 }
 
@@ -1268,6 +1266,7 @@ void Allocate_Arrays_Post_Load(MSEBoxModel *bm) {
 	//printf("Creating management PostLoad arrays\n");
 
 	bm->TAC_over = Util_Alloc_Init_3D_Int(bm->K_num_basket, bm->K_num_fisheries, bm->K_num_tot_sp, 0);
+	bm->rolling_cap_initialised = Util_Alloc_Init_2D_Int(bm->K_num_tot_sp, (bm->K_num_max_cohort * bm->K_num_max_genetypes), 0);
     
 	if(bm->useRBCTiers)
 		Open_Tiered_Output_File(bm);
