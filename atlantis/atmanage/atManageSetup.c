@@ -329,6 +329,11 @@ void Manage_Init(MSEBoxModel *bm, FILE *llogfp) {
 		bm->sp_basket = Util_Alloc_Init_2D_Int(1, bm->K_num_basket, bm->K_num_tot_sp);
 		bm->TAC_over = Util_Alloc_Init_3D_Int(1, bm->K_num_fisheries, bm->K_num_tot_sp, 0);
 		bm->rolling_cap_initialised = Util_Alloc_Init_2D_Int(bm->K_num_tot_sp, (bm->K_num_max_cohort * bm->K_num_max_genetypes), 0);
+		
+		printf("ALBI Debug: rolling_cap_initialised allocation - dims: %d x %d, pointer: %p\n", 
+       bm->K_num_tot_sp, 
+       (bm->K_num_max_cohort * bm->K_num_max_genetypes), 
+       (void*)bm->rolling_cap_initialised);
 
 		return;
 	}
