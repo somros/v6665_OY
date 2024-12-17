@@ -748,7 +748,7 @@ void Store_Min_Max_Avg(MSEBoxModel *bm, int sp) {
                     }
                     FunctGroupArray[sp].rolling_wgt[n][bm->K_rolling_cap_num] = this_wgt;
                     FunctGroupArray[sp].rolling_B[n][bm->K_rolling_cap_num] = this_biom;
-                    bm->rolling_cap_initialised[n][sp] = 1;
+                    bm->rolling_cap_initialised[sp][n] = 1;
                 } else {
                     if ( bm->newmonth) {
                         for ( nlist = 0; nlist < (bm->K_rolling_cap_num - 1); nlist++) {
