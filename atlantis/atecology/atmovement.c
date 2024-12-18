@@ -742,11 +742,11 @@ void Store_Min_Max_Avg(MSEBoxModel *bm, int sp) {
                 this_sum_W = 0.0;
                 this_sum_B = 0.0;
 
-                printf("Albi Debug: sp=%d, n=%d, rolling_cap_initialised=%p\n", 
-                       sp, n, bm->rolling_cap_initialised);
-                fflush(stdout);
-                printf("Albi Debug: value at [%d][%d] = %d\n", sp, n, bm->rolling_cap_initialised[sp][n]);
-                fflush(stdout);
+                //printf("Albi Debug: sp=%d, n=%d, rolling_cap_initialised=%p\n", 
+                       //sp, n, bm->rolling_cap_initialised);
+                //fflush(stdout);
+                //printf("Albi Debug: value at [%d][%d] = %d\n", sp, n, bm->rolling_cap_initialised[sp][n]);
+                //fflush(stdout);
 
                 if (!bm->rolling_cap_initialised[sp][n]) { // Initialise if the first time through
                     for ( nlist = 0; nlist < bm->K_rolling_cap_num; nlist++) {
@@ -760,9 +760,9 @@ void Store_Min_Max_Avg(MSEBoxModel *bm, int sp) {
                     if ( bm->newmonth) {
                         for ( nlist = 0; nlist < (bm->K_rolling_cap_num - 1); nlist++) {
 
-                            printf("Albi Debug: Accessing rolling_wgt for sp=%d with indices [n=%d][nlist=%d], array=%p\n",
-                            sp, n, nlist, FunctGroupArray[sp].rolling_wgt);
-                            fflush(stdout);
+                            //printf("Albi Debug: Accessing rolling_wgt for sp=%d with indices [n=%d][nlist=%d], array=%p\n",
+                            //sp, n, nlist, FunctGroupArray[sp].rolling_wgt);
+                            //fflush(stdout);
 
                             FunctGroupArray[sp].rolling_wgt[n][nlist] = FunctGroupArray[sp].rolling_wgt[n][nlist + 1];
                             FunctGroupArray[sp].rolling_B[n][nlist] = FunctGroupArray[sp].rolling_B[n][nlist + 1];
