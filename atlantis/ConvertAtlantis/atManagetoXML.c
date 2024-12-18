@@ -384,35 +384,53 @@ void ManamentFlagTimeXML(MSEBoxModel *bm, FILE *fp, char *fileName, xmlDocPtr do
 
 	// Needed in defining arrays so read in immediately - use K_rolling_cap_num to define size of the array assumign monthly updates
     bm->K_cap_rolling_period = (Util_XML_Read_Value(fileName, ATLANTIS_ATTRIBUTE,  bm->ecotest, 1, groupingNode, no_checking, "K_cap_rolling_period"));
-	printf("Albi Debug: K_cap_rolling_period = %f\n", bm->K_cap_rolling_period);
-    fflush(stdout);
+	//printf("Albi Debug: K_cap_rolling_period = %f\n", bm->K_cap_rolling_period);
+    //fflush(stdout);
     bm->K_rolling_cap_num = (int)(ceil(bm->K_cap_rolling_period * 12.0));
-	printf("Albi Debug: K_rolling_cap_num after calculation = %d\n", bm->K_rolling_cap_num);
-    fflush(stdout);
+	//printf("Albi Debug: K_rolling_cap_num after calculation = %d\n", bm->K_rolling_cap_num);
+    //fflush(stdout);
     if(!bm->K_rolling_cap_num) {
         bm->K_rolling_cap_num = 1;
-		printf("Debug: K_rolling_cap_num set to 1 after zero check\n");
-        fflush(stdout);
+		//printf("Debug: K_rolling_cap_num set to 1 after zero check\n");
+        //fflush(stdout);
     }
-	printf("Albi Debug: After initial calc - K_rolling_cap_num = %d\n", bm->K_rolling_cap_num);
-    fflush(stdout);
+	//printf("Albi Debug: After initial calc - K_rolling_cap_num = %d\n", bm->K_rolling_cap_num);
+    //fflush(stdout);
 
 	//ALBI START
 	//Initializing these arrays here
-	for(i = 0; i < bm->K_num_tot_sp; i++){
-		switch (FunctGroupArray[i].groupAgeType) {
-		case AGE_STRUCTURED:
-			FunctGroupArray[i].rolling_wgt = Util_Alloc_Init_2D_Double((bm->K_rolling_cap_num + 1), FunctGroupArray[i].numCohortsXnumGenes, 0.0);
-			FunctGroupArray[i].rolling_B = Util_Alloc_Init_2D_Double(bm->K_rolling_cap_num + 1, FunctGroupArray[i].numCohortsXnumGenes, 0.0);
-		break;
-		case AGE_STRUCTURED_BIOMASS:
-		    FunctGroupArray[i].rolling_B = Util_Alloc_Init_2D_Double(bm->K_rolling_cap_num + 1, FunctGroupArray[i].numCohortsXnumGenes, 0.0);
-		break;
-		case BIOMASS:
-			FunctGroupArray[i].rolling_B = Util_Alloc_Init_2D_Double(bm->K_rolling_cap_num + 1, FunctGroupArray[i].numCohortsXnumGenes, 0.0);
-		break;
-		}
-    }
+	printf("\nALBI Debug: Starting delayed array allocation with K_rolling_cap_num = %d\n", bm->K_rolling_cap_num);
+	fflush(stdout);
+
+	for(i = 0; i < bm->K_num_tot_sp; i++) {
+    	printf("ALBI Debug: Species %d (%s) - ", i, FunctGroupArray[i].name);
+    	fflush(stdout);
+    
+    	switch (FunctGroupArray[i].groupAgeType) {
+    	case AGE_STRUCTURED:
+        	printf("ALBI Debug:AGE_STRUCTURED, allocating [%d][%d] for both rolling arrays\n", 
+               	bm->K_rolling_cap_num + 1, FunctGroupArray[i].numCohortsXnumGenes);
+        	fflush(stdout);
+        	FunctGroupArray[i].rolling_wgt = Util_Alloc_Init_2D_Double((bm->K_rolling_cap_num + 1), FunctGroupArray[i].numCohortsXnumGenes, 0.0);
+        	FunctGroupArray[i].rolling_B = Util_Alloc_Init_2D_Double(bm->K_rolling_cap_num + 1, FunctGroupArray[i].numCohortsXnumGenes, 0.0);
+        break;
+    	case AGE_STRUCTURED_BIOMASS:
+        	printf("ALBI Debug:AGE_STRUCTURED_BIOMASS, allocating [%d][%d] for rolling_B\n", 
+               bm->K_rolling_cap_num + 1, FunctGroupArray[i].numCohortsXnumGenes);
+        	fflush(stdout);
+        	FunctGroupArray[i].rolling_B = Util_Alloc_Init_2D_Double(bm->K_rolling_cap_num + 1, FunctGroupArray[i].numCohortsXnumGenes, 0.0);
+        break;
+    	case BIOMASS:
+        	printf("ALBI Debug:BIOMASS, allocating [%d][%d] for rolling_B\n", 
+               bm->K_rolling_cap_num + 1, FunctGroupArray[i].numCohortsXnumGenes);
+        	fflush(stdout);
+        	FunctGroupArray[i].rolling_B = Util_Alloc_Init_2D_Double(bm->K_rolling_cap_num + 1, FunctGroupArray[i].numCohortsXnumGenes, 0.0);
+        break;
+    	}
+	}
+
+	printf("ALBI Debug: Completed delayed allocation for all %d species\n\n", bm->K_num_tot_sp);
+	fflush(stdout);
 	///ALBI END
 
 	Util_XML_Parse_Create_Node(fp, fileName, groupingNode, "dynDAS", "Dynamic Days at Sea flag.", "", XML_TYPE_BOOLEAN,"0");
