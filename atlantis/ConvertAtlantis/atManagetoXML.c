@@ -338,6 +338,8 @@ void EffortPenaltyXML(MSEBoxModel *bm, char *fileName, xmlNodePtr parent, char *
 
 void ManamentFlagTimeXML(MSEBoxModel *bm, FILE *fp, char *fileName, xmlDocPtr doc, xmlNodePtr rootnode) {
 
+	int i;
+
 	xmlNodePtr groupingNode, node, lookupNode;
 	groupingNode = Util_XML_Create_Node(ATLANTIS_ATTRIBUTE_SUB_GROUP, rootnode, "Management_Flags", "Management Flags", "", "");
 
@@ -385,7 +387,7 @@ void ManamentFlagTimeXML(MSEBoxModel *bm, FILE *fp, char *fileName, xmlDocPtr do
 	printf("Albi Debug: K_cap_rolling_period = %f\n", bm->K_cap_rolling_period);
     fflush(stdout);
     bm->K_rolling_cap_num = (int)(ceil(bm->K_cap_rolling_period * 12.0));
-	printf("Debug: K_rolling_cap_num after calculation = %d\n", bm->K_rolling_cap_num);
+	printf("Albi Debug: K_rolling_cap_num after calculation = %d\n", bm->K_rolling_cap_num);
     fflush(stdout);
     if(!bm->K_rolling_cap_num) {
         bm->K_rolling_cap_num = 1;
@@ -394,6 +396,24 @@ void ManamentFlagTimeXML(MSEBoxModel *bm, FILE *fp, char *fileName, xmlDocPtr do
     }
 	printf("Albi Debug: After initial calc - K_rolling_cap_num = %d\n", bm->K_rolling_cap_num);
     fflush(stdout);
+
+	//ALBI START
+	//Initializing these arrays here
+	for(i = 0; i < bm->K_num_tot_sp; i++){
+		switch (FunctGroupArray[i].groupAgeType) {
+		case AGE_STRUCTURED:
+			FunctGroupArray[i].rolling_wgt = Util_Alloc_Init_2D_Double((bm->K_rolling_cap_num + 1), FunctGroupArray[i].numCohortsXnumGenes, 0.0);
+			FunctGroupArray[i].rolling_B = Util_Alloc_Init_2D_Double(bm->K_rolling_cap_num + 1, FunctGroupArray[i].numCohortsXnumGenes, 0.0);
+		break;
+		case AGE_STRUCTURED_BIOMASS:
+		    FunctGroupArray[i].rolling_B = Util_Alloc_Init_2D_Double(bm->K_rolling_cap_num + 1, FunctGroupArray[i].numCohortsXnumGenes, 0.0);
+		break;
+		case BIOMASS:
+			FunctGroupArray[i].rolling_B = Util_Alloc_Init_2D_Double(bm->K_rolling_cap_num + 1, FunctGroupArray[i].numCohortsXnumGenes, 0.0);
+		break;
+		}
+    }
+	///ALBI END
 
 	Util_XML_Parse_Create_Node(fp, fileName, groupingNode, "dynDAS", "Dynamic Days at Sea flag.", "", XML_TYPE_BOOLEAN,"0");
 
