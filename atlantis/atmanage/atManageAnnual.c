@@ -2028,6 +2028,8 @@ void Ecosystem_Cap_Frescale(MSEBoxModel *bm, FILE *llogfp) {
                         //fprintf(llogfp, "CHECKPOINT 9\n");
                         fprintf(llogfp, "OY DEBUG 9: Time: %e %s-%d %s, this_Biom: %e, this_expect_catch: %e, tot_expect_catch: %e\n", bm->dayt, FunctGroupArray[sp].groupCode, nc, FisheryArray[nf].fisheryCode, this_Biom, this_expect_catch, tot_expect_catch);
 
+                        // ALBI: now reset this_expect_catch to 0
+                        this_expect_catch = 0;                
                     }
                 }
             }
