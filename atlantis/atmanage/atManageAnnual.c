@@ -1826,6 +1826,9 @@ void Ecosystem_Cap_Frescale(MSEBoxModel *bm, FILE *llogfp) {
             }
 
             /* If this is the first year then don't do the scaling */
+            //ALBI moved
+            FunctGroupArray[sp].speciesParams[sp_fishery_expected_catch_id] = 0;
+
             for (nf = 0; nf < bm->K_num_fisheries; nf++) {
                 /* Only change management in fisheries where management active */
                 if (bm->FISHERYprms[nf][manage_on_id] < 1)
@@ -1875,7 +1878,7 @@ void Ecosystem_Cap_Frescale(MSEBoxModel *bm, FILE *llogfp) {
                     fprintf(llogfp, "OY DEBUG 7: Time: %e %s %s mFC: %e, mpa_scale: %e, mFC_change_scale: %e\n", bm->dayt, FunctGroupArray[sp].groupCode, FisheryArray[nf].fisheryCode, mFC, mpa_scale, mFC_change_scale);
 
                     sel_curve = (int) (bm->FISHERYprms[nf][selcurve_id]);
-                    FunctGroupArray[sp].speciesParams[sp_fishery_expected_catch_id] = 0;
+                    //FunctGroupArray[sp].speciesParams[sp_fishery_expected_catch_id] = 0; // ALBI moved
                     for (nc = 0; nc < FunctGroupArray[sp].numCohortsXnumGenes; nc++) {
                         basechrt = nc / FunctGroupArray[sp].numGeneTypes;
 
