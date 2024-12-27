@@ -217,12 +217,12 @@ double Get_Fishing_Mortality(MSEBoxModel *bm, int sp, int chrt, int stage, int n
 		/* Apply the broken stick scaler is there is any  - default will be 1.0 */
 	mFC = mFC * bm->SP_FISHERYprms[sp][nf][mFC_scale_id];
 	
-	if (sp==16 && nf == 2 && bm->dayt > 730) {
+	//if (sp==16 && nf == 2 && bm->dayt > 730) {
 	  
-	  fprintf(llogfp,"ALBI mFC1 - Time: %e %s %s origmFC: %e, mFC_scale: %e, mFC: %e\n",
-           bm->dayt, FisheryArray[nf].fisheryCode, FunctGroupArray[sp].groupCode, bm->SP_FISHERYprms[sp][nf][mFC_id] / 86400.0, bm->SP_FISHERYprms[sp][nf][mFC_scale_id], mFC);
+	  //fprintf(llogfp,"ALBI mFC1 - Time: %e %s %s origmFC: %e, mFC_scale: %e, mFC: %e\n",
+           //bm->dayt, FisheryArray[nf].fisheryCode, FunctGroupArray[sp].groupCode, bm->SP_FISHERYprms[sp][nf][mFC_id] / 86400.0, bm->SP_FISHERYprms[sp][nf][mFC_scale_id], mFC);
 	  
-	}
+	//}
 	
 
 	if(FunctGroupArray[sp].isFished == FALSE){
