@@ -1958,7 +1958,8 @@ void Ecosystem_Cap_Frescale(MSEBoxModel *bm, FILE *llogfp) {
                                     }
                                     calcM = Z_Est - Fcurr;
 
-                                    fprintf(llogfp, "OY DEBUG 7.4: Time: %e %s-%d %s, this_start: %d, this_end: %e, Z_Est: %d, Fcurr: %d, calcM: %e\n", bm->dayt, FunctGroupArray[sp].groupCode, nc, FisheryArray[nf].fisheryCode, basechrt, sel, mFC_start_age, mFC_end_age, mFC);
+                                    fprintf(llogfp, "OY DEBUG 7.4: Time: %e %s-%d %s, this_start: %e, this_end: %e, Z_Est: %e, Fcurr: %e, calcM: %e\n", 
+                                    bm->dayt, FunctGroupArray[sp].groupCode, nc, FisheryArray[nf].fisheryCode, this_start, this_end, Z_Est, Fcurr, calcM);
 
                                     break;
                                 case full_dynamic_M_est:
