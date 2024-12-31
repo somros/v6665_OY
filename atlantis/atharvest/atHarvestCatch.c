@@ -217,12 +217,12 @@ double Get_Fishing_Mortality(MSEBoxModel *bm, int sp, int chrt, int stage, int n
 		/* Apply the broken stick scaler is there is any  - default will be 1.0 */
 	mFC = mFC * bm->SP_FISHERYprms[sp][nf][mFC_scale_id];
 	
-	if (sp==16 && ((int)(bm->dayt - 7) % 365 == 0)) {
+	/*if (sp==16 && ((int)(bm->dayt - 7) % 365 == 0)) {
 	  
 	  fprintf(llogfp,"ALBI mFC1 - Time: %e %s %s origmFC: %e, mFC_scale: %e, mFC: %e\n",
            bm->dayt, FisheryArray[nf].fisheryCode, FunctGroupArray[sp].groupCode, bm->SP_FISHERYprms[sp][nf][mFC_id] / 86400.0, bm->SP_FISHERYprms[sp][nf][mFC_scale_id], mFC);
 	  
-	}
+	}*/
 	
 
 	if(FunctGroupArray[sp].isFished == FALSE){
@@ -297,13 +297,13 @@ double Get_Fishing_Mortality(MSEBoxModel *bm, int sp, int chrt, int stage, int n
 	/* Apply fishing mortality */
 	SPtoFC = mFC * mpa_scale * mFC_scale * Biom * sel;
 
-	if (sp==16 && ((int)(bm->dayt - 7) % 365 == 0)) {
+	/*if (sp==16 && ((int)(bm->dayt - 7) % 365 == 0)) {
 	  
 	  fprintf(llogfp,"Albi mFC2: Time: %e, %d-%d %s-%d %s SPtoFC orig: %e (with mFC: %e mFC-param: %e, mFCscal_prm: %e, and Biom: %e, mpa_scale:%e, mFC_scale: %e, sel: %e)\n",
 			bm->dayt, bm->current_box, bm->current_layer, FunctGroupArray[sp].groupCode,
 			chrt, FisheryArray[nf].fisheryCode, SPtoFC, mFC, bm->SP_FISHERYprms[sp][nf][mFC_id] / 86400.0, bm->SP_FISHERYprms[sp][nf][mFC_scale_id], Biom, mpa_scale, mFC_scale, sel);
 	  
-	}
+	}*/
 
 	if(do_debug){
 		fprintf(llogfp,"Time: %e, %d-%d %s-%d %s SPtoFC orig: %e (with mFC: %e mFC-param: %e, mFCscal_prm: %e, and Biom: %e, mpa_scale:%e, mFC_scale: %e, sel: %e)\n",
