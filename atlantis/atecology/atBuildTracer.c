@@ -330,7 +330,7 @@ void Build_TrName_NameList(MSEBoxModel *bm) {
 				sprintf(str, "%s%d_Nums", FunctGroupArray[fgIndex].name, cohort + 1);
 				Add_Tracer(&trnamelist, index++, str, &FunctGroupArray[fgIndex].NumsTracers[cohort], 0, 3, 1, 0);
 
-				printf("ALBI: Tracer %s has index %d\n", str, FunctGroupArray[fgIndex].NumsTracers[cohort]);
+				//printf("ALBI: Tracer %s has index %d\n", str, FunctGroupArray[fgIndex].NumsTracers[cohort]);
 			}
 		}
 

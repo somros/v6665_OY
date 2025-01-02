@@ -3924,7 +3924,9 @@ void Record_End_Num(MSEBoxModel *bm, int species, FILE *llogfp) {
         if(FunctGroupArray[species].groupAgeType == AGE_STRUCTURED) {
             den = FunctGroupArray[species].NumsTracers[cohort];
 
+			fprintf(llogfp, "ALBI M DEBUG 5.0 Time: %e, %s%d_Nums\n", bm->dayt, FunctGroupArray[species].name, cohort+1, den);
 			fprintf(llogfp, "ALBI M DEBUG 5.1 Time: %e, %s-%d, den = %d\n", bm->dayt, FunctGroupArray[species].groupCode, cohort, den);
+			
 
             for (ij = 0; ij < bm->nbox; ij++) {
                 if (bm->boxes[ij].type != BOUNDARY) {
