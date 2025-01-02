@@ -3539,6 +3539,10 @@ void Ecology_Update_Vertebrate_Cohorts(MSEBoxModel *bm, FILE *llogfp) {
 			if (need_update) {    
 				/* Record final numbers if needed */
                 if(bm->M_est_method == Z_and_F_based) {
+
+				fprintf(llogfp, "ALBI M DEBUG 1 Time: %e, %d, made it into if statement\n",
+										bm->dayt, FunctGroupArray[species].groupCode);
+									
                     Record_End_Num(bm, species);
                 }
 
@@ -3947,6 +3951,9 @@ void Record_End_Num(MSEBoxModel *bm, int species) {
             }
         }
     }
+
+	printf("ALBI M DEBUG 2 Time: %e, %d, made it to the end of Record_End_Num\n",
+										bm->dayt, FunctGroupArray[species].groupCode);
     
     return;
 }
