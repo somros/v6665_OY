@@ -3904,22 +3904,28 @@ void Record_End_Num(MSEBoxModel *bm, int species, FILE *llogfp) {
     
     for(cohort = FunctGroupArray[species].numGeneTypes; cohort<FunctGroupArray[species].numCohortsXnumGenes; cohort++){
         fished_chrt = (int) (FunctGroupArray[species].speciesParams[Age95pcntV_id]);
+
+		fprintf(llogfp, "ALBI M DEBUG 3.1 Time: %e, %s-%d, fished_chrt = %d\n",	bm->dayt, FunctGroupArray[species].groupCode, cohort, fished_chrt);
+
         if (fished_chrt < ((FunctGroupArray[species].numCohortsXnumGenes) / 2))
             fished_chrt = ((FunctGroupArray[species].numCohortsXnumGenes) / 2);
 
-		fprintf(llogfp, "ALBI M DEBUG 3 Time: %e, %s-%d, fished_chrt = %d\n",	bm->dayt, FunctGroupArray[species].groupCode, cohort, fished_chrt);
+		fprintf(llogfp, "ALBI M DEBUG 3.2 Time: %e, %s-%d, numCohortsXnumGenes = , fished_chrt = %d\n",	bm->dayt, FunctGroupArray[species].groupCode, cohort, FunctGroupArray[species].numCohortsXnumGenes, fished_chrt);
 
         // Now initialise the calcN and starting numbers in bm->calcTrackedMort - Zero here... Recruits done in reproduction step
         for (stock_id = 0; stock_id < FunctGroupArray[species].numStocks; stock_id++) {
             bm->calcTrackedMort[species][cohort][stock_id][endNum_id] = 0.0;
 
-			fprintf(llogfp, "ALBI M DEBUG 4 Time: %e, %s-%d, endnum_id = %e\n",	bm->dayt, FunctGroupArray[species].groupCode, bm->calcTrackedMort[species][cohort][stock_id][endNum_id]);
+			fprintf(llogfp, "ALBI M DEBUG 4 Time: %e, %s-%d, endnum_id = %e\n",	bm->dayt, FunctGroupArray[species].groupCode, cohort, bm->calcTrackedMort[species][cohort][stock_id][endNum_id]);
 
         }
 
         
         if(FunctGroupArray[species].groupAgeType == AGE_STRUCTURED) {
             den = FunctGroupArray[species].NumsTracers[cohort];
+
+			fprintf(llogfp, "ALBI M DEBUG 5.1 Time: %e, %s-%d, den = %e\n", bm->dayt, FunctGroupArray[species].groupCode, cohort, den);
+
             for (ij = 0; ij < bm->nbox; ij++) {
                 if (bm->boxes[ij].type != BOUNDARY) {
                     for (k = 0; k < bm->boxes[ij].nz; k++) {
@@ -3933,7 +3939,7 @@ void Record_End_Num(MSEBoxModel *bm, int species, FILE *llogfp) {
                 }
             }
 
-			fprintf(llogfp, "ALBI M DEBUG 5 Time: %e, %s-%d, endnum_id = %e\n", bm->dayt, FunctGroupArray[species].groupCode, bm->calcTrackedMort[species][cohort][stock_id][endNum_id]);
+			fprintf(llogfp, "ALBI M DEBUG 5.2 Time: %e, %s-%d, endnum_id = %e\n", bm->dayt, FunctGroupArray[species].groupCode, cohort, bm->calcTrackedMort[species][cohort][stock_id][endNum_id]);
 
 
         } else {
