@@ -646,10 +646,10 @@ void Calculate_Age_Vulnerability(MSEBoxModel *bm, FILE *llogfp) {
 						}
 					}
 				}
-				if (verbose) {
+				//if (verbose) {
 					fprintf(llogfp, "For %s setting Vage50 = %e, Vage95 = %e\n", FunctGroupArray[sp].groupCode, FunctGroupArray[sp].speciesParams[Age50pcntV_id],
 							FunctGroupArray[sp].speciesParams[Age95pcntV_id]);
-				}
+				//}
 			}
 		}
 	}

@@ -3910,7 +3910,7 @@ void Record_End_Num(MSEBoxModel *bm, int species, FILE *llogfp) {
         if (fished_chrt < ((FunctGroupArray[species].numCohortsXnumGenes) / 2))
             fished_chrt = ((FunctGroupArray[species].numCohortsXnumGenes) / 2);
 
-		fprintf(llogfp, "ALBI M DEBUG 3.2 Time: %e, %s-%d, numCohortsXnumGenes = , fished_chrt = %d\n",	bm->dayt, FunctGroupArray[species].groupCode, cohort, FunctGroupArray[species].numCohortsXnumGenes, fished_chrt);
+		fprintf(llogfp, "ALBI M DEBUG 3.2 Time: %e, %s-%d, numCohortsXnumGenes = %d, fished_chrt = %d\n",	bm->dayt, FunctGroupArray[species].groupCode, cohort, FunctGroupArray[species].numCohortsXnumGenes, fished_chrt);
 
         // Now initialise the calcN and starting numbers in bm->calcTrackedMort - Zero here... Recruits done in reproduction step
         for (stock_id = 0; stock_id < FunctGroupArray[species].numStocks; stock_id++) {
