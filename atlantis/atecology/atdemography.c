@@ -3540,7 +3540,7 @@ void Ecology_Update_Vertebrate_Cohorts(MSEBoxModel *bm, FILE *llogfp) {
 				/* Record final numbers if needed */
                 if(bm->M_est_method == Z_and_F_based) {
 
-				fprintf(llogfp, "ALBI M DEBUG 1 Time: %e, %d, made it into if statement\n",
+				fprintf(llogfp, "ALBI M DEBUG 1 Time: %e, %s, made it into if statement\n",
 										bm->dayt, FunctGroupArray[species].groupCode);
 									
                     Record_End_Num(bm, species);
@@ -3899,16 +3899,22 @@ void Record_End_Num(MSEBoxModel *bm, int species) {
     int ij, k, cohort, stock_id, den, fished_chrt;
     double chrt_biomass;
     double biomass = 0.0;
+
+	printf("ALBI M DEBUG 2 Time: %e, %s\n",	bm->dayt, FunctGroupArray[species].groupCode);
     
     for(cohort = FunctGroupArray[species].numGeneTypes; cohort<FunctGroupArray[species].numCohortsXnumGenes; cohort++){
         fished_chrt = (int) (FunctGroupArray[species].speciesParams[Age95pcntV_id]);
         if (fished_chrt < ((FunctGroupArray[species].numCohortsXnumGenes) / 2))
             fished_chrt = ((FunctGroupArray[species].numCohortsXnumGenes) / 2);
 
+		printf("ALBI M DEBUG 3 Time: %e, %s-%d\n",	bm->dayt, FunctGroupArray[species].groupCode, cohort);
+
         // Now initialise the calcN and starting numbers in bm->calcTrackedMort - Zero here... Recruits done in reproduction step
         for (stock_id = 0; stock_id < FunctGroupArray[species].numStocks; stock_id++) {
             bm->calcTrackedMort[species][cohort][stock_id][endNum_id] = 0.0;
         }
+
+		printf("ALBI M DEBUG 4 Time: %e, %s-%d\n",	bm->dayt, FunctGroupArray[species].groupCode, cohort);
         
         if(FunctGroupArray[species].groupAgeType == AGE_STRUCTURED) {
             den = FunctGroupArray[species].NumsTracers[cohort];
@@ -3924,6 +3930,9 @@ void Record_End_Num(MSEBoxModel *bm, int species) {
                     }
                 }
             }
+
+		printf("ALBI M DEBUG 5 Time: %e, %s-%d\n",	bm->dayt, FunctGroupArray[species].groupCode, cohort);
+
         } else {
             den = FunctGroupArray[species].totNTracers[cohort];
             for (ij = 0; ij < bm->nbox; ij++) {
@@ -3949,10 +3958,13 @@ void Record_End_Num(MSEBoxModel *bm, int species) {
                     bm->calcTrackedMort[species][cohort][stock_id][endNum_id] += chrt_biomass;
                 }
             }
+
+		printf("ALBI M DEBUG 6 Time: %e, %s-%d\n",	bm->dayt, FunctGroupArray[species].groupCode, cohort);
+
         }
     }
 
-	printf("ALBI M DEBUG 2 Time: %e, %d, made it to the end of Record_End_Num\n",
+	printf("ALBI M DEBUG 7 Time: %e, %d, made it to the end of Record_End_Num\n",
 										bm->dayt, FunctGroupArray[species].groupCode);
     
     return;
