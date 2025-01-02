@@ -283,6 +283,14 @@ void Calculate_Box_Biomass(MSEBoxModel *bm, FILE *llogfp, int ij, int nreg, int 
 							}
 							**/
 
+						
+                            if((sp == 16) && (bm->dayt == 150) && (bm->checkbox == 34)){
+								fprintf(llogfp, "ALBI TIme: %e in calc_box_biom %s-%d in box %d-%d totbiom[sp]: %.20e, sn = %.20e, rn = %.20e, den = %.20e\n",
+									bm->dayt, FunctGroupArray[sp].groupCode, n, ij, k, bm->totbiom[sp], bm->boxes[ij].tr[k][sn],
+									bm->boxes[ij].tr[k][rn], bm->boxes[ij].tr[k][den]);
+							}
+							
+
                             if(bm->totbiom[sp] < 0){
                                 printf("sn = %e, rn = %e, den = %e\n", bm->boxes[ij].tr[k][sn], bm->boxes[ij].tr[k][rn], bm->boxes[ij].tr[k][den]);
                                 quit("Biomass of %s:%d is less than zero after adding biomass from box%d:%d\n", FunctGroupArray[sp].groupCode, n, ij, k);
