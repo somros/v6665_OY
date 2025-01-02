@@ -63,7 +63,7 @@ void Init_Aging_Arrays(MSEBoxModel *bm, int species, int stock_id, int maxstock_
 void Prepare_Age_Distrib(MSEBoxModel *bm, int sp, FILE *llogfp);
 void Sanity_Check_Recruits(MSEBoxModel *bm, int species, FILE *llogfp);
 void Store_Recruitment_Diagnostics(MSEBoxModel *bm, int species, int use_aggregate, int do_debug, FILE *llogfp);
-void Record_End_Num(MSEBoxModel *bm, int species);
+void Record_End_Num(MSEBoxModel *bm, int species, FILE *llogfp);
 void Reset_Mortality(MSEBoxModel *bm, int sp);
 void Update_Age_Distrib(MSEBoxModel *bm, int sp, int stock_id, int sp_ddepend_move, int rec_related, FILE *llogfp);
 void Update_Aging_Numbers(MSEBoxModel *bm, int species, int cohort, int stock_id, double dennow, int do_debug, FILE *llogfp);
@@ -3543,7 +3543,7 @@ void Ecology_Update_Vertebrate_Cohorts(MSEBoxModel *bm, FILE *llogfp) {
 				fprintf(llogfp, "ALBI M DEBUG 1 Time: %e, %s, made it into if statement\n",
 										bm->dayt, FunctGroupArray[species].groupCode);
 									
-                    Record_End_Num(bm, species);
+                    Record_End_Num(bm, species, llogfp);
                 }
 
 				/* Initialise */
@@ -3895,26 +3895,28 @@ void Ecology_Update_Vertebrate_Cohorts(MSEBoxModel *bm, FILE *llogfp) {
 /************************************************************************************************************************************
  * Resetting the mortality
  */
-void Record_End_Num(MSEBoxModel *bm, int species) {
+void Record_End_Num(MSEBoxModel *bm, int species, FILE *llogfp) {
     int ij, k, cohort, stock_id, den, fished_chrt;
     double chrt_biomass;
     double biomass = 0.0;
 
-	printf("ALBI M DEBUG 2 Time: %e, %s\n",	bm->dayt, FunctGroupArray[species].groupCode);
+	fprintf(llogfp, "ALBI M DEBUG 2 Time: %e, %s\n",	bm->dayt, FunctGroupArray[species].groupCode);
     
     for(cohort = FunctGroupArray[species].numGeneTypes; cohort<FunctGroupArray[species].numCohortsXnumGenes; cohort++){
         fished_chrt = (int) (FunctGroupArray[species].speciesParams[Age95pcntV_id]);
         if (fished_chrt < ((FunctGroupArray[species].numCohortsXnumGenes) / 2))
             fished_chrt = ((FunctGroupArray[species].numCohortsXnumGenes) / 2);
 
-		printf("ALBI M DEBUG 3 Time: %e, %s-%d\n",	bm->dayt, FunctGroupArray[species].groupCode, cohort);
+		fprintf(llogfp, "ALBI M DEBUG 3 Time: %e, %s-%d, fished_chrt = %d\n",	bm->dayt, FunctGroupArray[species].groupCode, cohort, fished_chrt);
 
         // Now initialise the calcN and starting numbers in bm->calcTrackedMort - Zero here... Recruits done in reproduction step
         for (stock_id = 0; stock_id < FunctGroupArray[species].numStocks; stock_id++) {
             bm->calcTrackedMort[species][cohort][stock_id][endNum_id] = 0.0;
+
+			fprintf(llogfp, "ALBI M DEBUG 4 Time: %e, %s-%d, endnum_id = %e\n",	bm->dayt, FunctGroupArray[species].groupCode, bm->calcTrackedMort[species][cohort][stock_id][endNum_id]);
+
         }
 
-		printf("ALBI M DEBUG 4 Time: %e, %s-%d\n",	bm->dayt, FunctGroupArray[species].groupCode, cohort);
         
         if(FunctGroupArray[species].groupAgeType == AGE_STRUCTURED) {
             den = FunctGroupArray[species].NumsTracers[cohort];
@@ -3931,7 +3933,8 @@ void Record_End_Num(MSEBoxModel *bm, int species) {
                 }
             }
 
-		printf("ALBI M DEBUG 5 Time: %e, %s-%d\n",	bm->dayt, FunctGroupArray[species].groupCode, cohort);
+			fprintf(llogfp, "ALBI M DEBUG 5 Time: %e, %s-%d, endnum_id = %e\n", bm->dayt, FunctGroupArray[species].groupCode, bm->calcTrackedMort[species][cohort][stock_id][endNum_id]);
+
 
         } else {
             den = FunctGroupArray[species].totNTracers[cohort];
@@ -3959,13 +3962,12 @@ void Record_End_Num(MSEBoxModel *bm, int species) {
                 }
             }
 
-		printf("ALBI M DEBUG 6 Time: %e, %s-%d\n",	bm->dayt, FunctGroupArray[species].groupCode, cohort);
+		//printf("ALBI M DEBUG 6 Time: %e, %s-%d\n",	bm->dayt, FunctGroupArray[species].groupCode, cohort);
 
         }
     }
 
-	printf("ALBI M DEBUG 7 Time: %e, %d, made it to the end of Record_End_Num\n",
-										bm->dayt, FunctGroupArray[species].groupCode);
+	fprintf(llogfp, "ALBI M DEBUG 7 Time: %e, %s, made it to the end of Record_End_Num\n", bm->dayt, FunctGroupArray[species].groupCode);
     
     return;
 }
@@ -4360,7 +4362,7 @@ void Invertebrate_Reproduction(MSEBoxModel *bm, int wclayer, int maxdeep, int to
 				if (sp_Age_Now) {
                     /* Record final numbers if needed */
                     if(bm->M_est_method == Z_and_F_based) {
-                        Record_End_Num(bm, species);
+                        Record_End_Num(bm, species, llogfp);
                     }
 
 					Init_Aging_Arrays(bm, species, stock_id, maxstock_id, llogfp);
