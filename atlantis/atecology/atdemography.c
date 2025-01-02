@@ -3902,7 +3902,7 @@ void Record_End_Num(MSEBoxModel *bm, int species, FILE *llogfp) {
 
 	fprintf(llogfp, "ALBI M DEBUG 2 Time: %e, %s\n",	bm->dayt, FunctGroupArray[species].groupCode);
     
-    for(cohort = FunctGroupArray[species].numGeneTypes; cohort<FunctGroupArray[species].numCohortsXnumGenes; cohort++){
+    for(cohort = 0; cohort<FunctGroupArray[species].numCohortsXnumGenes; cohort++){ // ALBI changed from: for(cohort = FunctGroupArray[species].numGeneTypes; cohort<FunctGroupArray[species].numCohortsXnumGenes; cohort++){
         fished_chrt = (int) (FunctGroupArray[species].speciesParams[Age95pcntV_id]);
 
 		fprintf(llogfp, "ALBI M DEBUG 3.1 Time: %e, %s-%d, fished_chrt = %d\n",	bm->dayt, FunctGroupArray[species].groupCode, cohort, fished_chrt);
