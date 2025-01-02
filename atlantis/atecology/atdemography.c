@@ -3924,7 +3924,7 @@ void Record_End_Num(MSEBoxModel *bm, int species, FILE *llogfp) {
         if(FunctGroupArray[species].groupAgeType == AGE_STRUCTURED) {
             den = FunctGroupArray[species].NumsTracers[cohort];
 
-			fprintf(llogfp, "ALBI M DEBUG 5.1 Time: %e, %s-%d, den = %e\n", bm->dayt, FunctGroupArray[species].groupCode, cohort, den);
+			fprintf(llogfp, "ALBI M DEBUG 5.1 Time: %e, %s-%d, den = %d\n", bm->dayt, FunctGroupArray[species].groupCode, cohort, den);
 
             for (ij = 0; ij < bm->nbox; ij++) {
                 if (bm->boxes[ij].type != BOUNDARY) {
@@ -3936,7 +3936,7 @@ void Record_End_Num(MSEBoxModel *bm, int species, FILE *llogfp) {
                         
                         bm->calcTrackedMort[species][cohort][stock_id][endNum_id] += bm->boxes[ij].tr[k][den];
 
-					fprintf(llogfp, "ALBI M DEBUG 5.2 Time: %e, box: %d-%d, Species: %s-%d, stock_id = %d, biomass = %e, endnum_id = %e\n", bm->dayt, ij, k, FunctGroupArray[species].groupCode, cohort, stock_id, biomass, bm->calcTrackedMort[species][cohort][stock_id][endNum_id]);
+					fprintf(llogfp, "ALBI M DEBUG 5.2 Time: %e, box: %d-%d, Species: %s-%d, stock_id = %d, biomass = %e, this_den = %e, endnum_id = %e\n", bm->dayt, ij, k, FunctGroupArray[species].groupCode, cohort, stock_id, biomass, bm->boxes[ij].tr[k][den], bm->calcTrackedMort[species][cohort][stock_id][endNum_id]);
 
                     }
                 }
