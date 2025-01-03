@@ -3896,7 +3896,7 @@ void Ecology_Update_Vertebrate_Cohorts(MSEBoxModel *bm, FILE *llogfp) {
  * Resetting the mortality
  */
 void Record_End_Num(MSEBoxModel *bm, int species, FILE *llogfp) {
-    int ij, k, cohort, stock_id, den, fished_chrt;
+    int ij, k, cohort, stock_id, den, fished_chrt, sn, rn;
     double chrt_biomass;
     double biomass = 0.0;
 
@@ -3929,7 +3929,13 @@ void Record_End_Num(MSEBoxModel *bm, int species, FILE *llogfp) {
 
 			// ALBI DEBUG
 			// Adding here all vertebrate tracers to understand why in this part of the code they are not getting called correctly
-			
+			sn = FunctGroupArray[species].structNTracers[cohort];
+			rn = FunctGroupArray[species].resNTracers[cohort];
+			den = FunctGroupArray[species].NumsTracers[cohort];
+
+			fprintf(llogfp, "ALBI M DEBUG 5.2 Time: %e, %s-%d, sn_idx = %d, rn_idx = %d, den_idx = %d\n", bm->dayt, FunctGroupArray[species].groupCode, cohort, sn, rn, den);
+
+			//ALBI DEBUG END
 
             for (ij = 0; ij < bm->nbox; ij++) {
                 if (bm->boxes[ij].type != BOUNDARY) {
@@ -3939,15 +3945,15 @@ void Record_End_Num(MSEBoxModel *bm, int species, FILE *llogfp) {
                         
                         stock_id = bm->group_stock[species][ij][k];
                         
-                        bm->calcTrackedMort[species][cohort][stock_id][endNum_id] += bm->boxes[ij].tr[k][den];
+                        bm->calcTrackedMort[species][cohort][stock_id][endNum_id] += bm->boxes[ij].tr[k][den]; 
 
-					fprintf(llogfp, "ALBI M DEBUG 5.2 Time: %e, box: %d-%d, Species: %s-%d, stock_id = %d, biomass = %e, this_den = %e, endnum_id = %e\n", bm->dayt, ij, k, FunctGroupArray[species].groupCode, cohort, stock_id, biomass, bm->boxes[ij].tr[k][den], bm->calcTrackedMort[species][cohort][stock_id][endNum_id]);
+					fprintf(llogfp, "ALBI M DEBUG 5.3 Time: %e, box: %d-%d, Species: %s-%d, stock_id = %d, biomass = %e, this_den = %e, endnum_id = %e\n", bm->dayt, ij, k, FunctGroupArray[species].groupCode, cohort, stock_id, biomass, bm->boxes[ij].tr[k][den], bm->calcTrackedMort[species][cohort][stock_id][endNum_id]);
 
                     }
                 }
             }
 
-			fprintf(llogfp, "ALBI M DEBUG 5.3 Time: %e, %s-%d, endnum_id = %e\n", bm->dayt, FunctGroupArray[species].groupCode, cohort, bm->calcTrackedMort[species][cohort][stock_id][endNum_id]);
+			fprintf(llogfp, "ALBI M DEBUG 5.4 Time: %e, %s-%d, endnum_id = %e\n", bm->dayt, FunctGroupArray[species].groupCode, cohort, bm->calcTrackedMort[species][cohort][stock_id][endNum_id]);
 
 
         } else {
