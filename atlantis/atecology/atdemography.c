@@ -3941,16 +3941,8 @@ void Record_End_Num(MSEBoxModel *bm, int species, FILE *llogfp) {
                 if (bm->boxes[ij].type != BOUNDARY) {
                     for (k = 0; k < bm->boxes[ij].nz; k++) {
 
-						fprintf(llogfp, "DEBUG Details 2: t=%e, Box=%d-%d, den=%d, species=%s-%d, tr[k][den]=%e\n"
-                "Pointers: tr=%p, tr[k]=%p, tr[k][den]=%p\n",
-        bm->dayt, ij, k, den,
-        FunctGroupArray[species].groupCode, cohort,
-        bm->boxes[ij].tr[k][den],
-        (void*)bm->boxes[ij].tr, 
-        (void*)&bm->boxes[ij].tr[k],
-        (void*)&bm->boxes[ij].tr[k][den]);
-
-						//fprintf(llogfp, "ALBI M DEBUG 5.3 Time: %e, box: %d-%d, Species: %s-%d, den = %e, den_idx = %d\n", bm->dayt, ij, k, FunctGroupArray[species].groupCode, cohort, bm->boxes[ij].tr[k][den], den);
+						fprintf(llogfp, "ALBI M DEBUG 5.3 Time: %e, box: %d-%d, Species: %s-%d, sn = %e, rn = %e, den = %e, sn_idx = %d, rn_idx = %d, den_idx = %d\n", 
+						bm->dayt, ij, k, FunctGroupArray[species].groupCode, cohort, bm->boxes[ij].tr[k][sn], bm->boxes[ij].tr[k][rn], bm->boxes[ij].tr[k][den], sn, rn, den);
 
                         if (fished_chrt == cohort )
                             biomass += bm->boxes[ij].tr[k][den];
