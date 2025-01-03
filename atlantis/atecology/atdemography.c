@@ -3925,7 +3925,10 @@ void Record_End_Num(MSEBoxModel *bm, int species, FILE *llogfp) {
             den = FunctGroupArray[species].NumsTracers[cohort];
 
 			fprintf(llogfp, "ALBI M DEBUG 5.0 Time: %e, %s%d_Nums\n", bm->dayt, FunctGroupArray[species].name, cohort+1, den);
-			fprintf(llogfp, "ALBI M DEBUG 5.1 Time: %e, %s-%d, den = %d\n", bm->dayt, FunctGroupArray[species].groupCode, cohort, den);
+			fprintf(llogfp, "ALBI M DEBUG 5.1 Time: %e, %s-%d, den_idx = %d\n", bm->dayt, FunctGroupArray[species].groupCode, cohort, den);
+
+			// ALBI DEBUG
+			// Adding here all vertebrate tracers to understand why in this part of the code they are not getting called correctly
 			
 
             for (ij = 0; ij < bm->nbox; ij++) {
