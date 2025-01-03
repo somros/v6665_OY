@@ -3947,6 +3947,9 @@ void Record_End_Num(MSEBoxModel *bm, int species, FILE *llogfp) {
                         
                         bm->calcTrackedMort[species][cohort][stock_id][endNum_id] += bm->boxes[ij].tr[k][den]; 
 
+						fprintf(llogfp, "DEBUG Access 2: &bm->boxes[%d].tr=%p, k=%d, den=%d, nz=%d\n",
+        ij, (void*)bm->boxes[ij].tr, k, den, bm->boxes[ij].nz);
+
 					fprintf(llogfp, "ALBI M DEBUG 5.3 Time: %e, box: %d-%d, Species: %s-%d, stock_id = %d, biomass = %e, this_den = %e, endnum_id = %e\n", bm->dayt, ij, k, FunctGroupArray[species].groupCode, cohort, stock_id, biomass, bm->boxes[ij].tr[k][den], bm->calcTrackedMort[species][cohort][stock_id][endNum_id]);
 
                     }
