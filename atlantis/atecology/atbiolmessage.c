@@ -284,10 +284,10 @@ void Calculate_Box_Biomass(MSEBoxModel *bm, FILE *llogfp, int ij, int nreg, int 
 							**/
 
 						//ALBI DEBUG
-						if((sp == 16) && (bm->dayt == 94.5) && (ij == 34)){
-							fprintf(llogfp, "DEBUG Access 1: &bm->boxes[%d].tr=%p, k=%d, den=%d, nz=%d\n",
-        							ij, (void*)bm->boxes[ij].tr, k, den, bm->boxes[ij].nz);
-						}
+						//if((sp == 16) && (bm->dayt == 94.5) && (ij == 34)){
+							//fprintf(llogfp, "DEBUG Access 1: &bm->boxes[%d].tr=%p, k=%d, den=%d, nz=%d\n",
+        							//ij, (void*)bm->boxes[ij].tr, k, den, bm->boxes[ij].nz);
+						//}
 
 						
                             if((sp == 16) && (bm->dayt == 94.5) && (ij == 34)){
