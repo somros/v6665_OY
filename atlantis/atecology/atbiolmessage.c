@@ -285,9 +285,9 @@ void Calculate_Box_Biomass(MSEBoxModel *bm, FILE *llogfp, int ij, int nreg, int 
 
 						
                             if((sp == 16) && (bm->dayt == 150) && (ij == 34)){
-								fprintf(llogfp, "ALBI TIme: %e in calc_box_biom %s-%d in box %d-%d totbiom[sp]: %.20e, sn = %.20e, rn = %.20e, den = %.20e\n",
+								fprintf(llogfp, "ALBI TIme: %e in calc_box_biom %s-%d in box %d-%d totbiom[sp]: %.20e, sn = %.20e, rn = %.20e, den = %.20e, den_idx = %d\n",
 									bm->dayt, FunctGroupArray[sp].groupCode, n, ij, k, bm->totbiom[sp], bm->boxes[ij].tr[k][sn],
-									bm->boxes[ij].tr[k][rn], bm->boxes[ij].tr[k][den]);
+									bm->boxes[ij].tr[k][rn], bm->boxes[ij].tr[k][den], den);
 							}
 							
 
