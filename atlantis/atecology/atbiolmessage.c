@@ -871,8 +871,31 @@ void Ecology_Calculate_Total_Abundance(MSEBoxModel *bm, double dt, int call_type
     double num_rec = 0;
 	int cohort;
 	int isDiagnostic = call_type>0?1:0;
+	int den = 0;
 
 	flagstockout = 0;
+
+	//ALBI
+	//Is DEN zeroed out before or after the start iof tjhis function?
+	for(sp = 0; sp < bm->K_num_tot_sp; sp++) {
+				if(FunctGroupArray[sp].isVertebrate == TRUE){
+				for(cohort = 0; cohort<FunctGroupArray[sp].numCohortsXnumGenes; cohort++) {
+					for (ij = 0; ij < bm->nbox; ij++) {
+						if (ij == 34) {
+						for (k = 0; k < bm->boxes[ij].nz; k++) {
+
+							den = FunctGroupArray[sp].NumsTracers[cohort];
+
+							fprintf(llogfp, "ALBI DEN DEBUG L443 Time: %e, box: %d-%d, Species: %s-%d, den_idx = %d, den = %e\n", 
+							bm->dayt, ij, k, FunctGroupArray[sp].groupCode, cohort, den, bm->boxes[ij].tr[k][den]);
+							
+						}
+						}
+					}
+				}
+			}
+	}
+	//ALBI END
 
 	if (verbose > 0)
 		printf("Doing Ecology_Calculate_Total_Abundance\n");

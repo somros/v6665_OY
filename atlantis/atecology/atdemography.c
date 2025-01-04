@@ -3505,7 +3505,7 @@ void Ecology_Update_Vertebrate_Cohorts(MSEBoxModel *bm, FILE *llogfp) {
 
 							den = FunctGroupArray[species].NumsTracers[cohort];
 
-							fprintf(llogfp, "ALBI DEN DEBUG Time: %e, box: %d-%d, Species: %s-%d, den_idx = %d, den = %e\n", 
+							fprintf(llogfp, "ALBI DEN DEBUG L423 Time: %e, box: %d-%d, Species: %s-%d, den_idx = %d, den = %e\n", 
 							bm->dayt, ij, k, FunctGroupArray[species].groupCode, cohort, den, bm->boxes[ij].tr[k][den]);
 							
 						}
