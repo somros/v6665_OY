@@ -3500,7 +3500,7 @@ void Ecology_Update_Vertebrate_Cohorts(MSEBoxModel *bm, FILE *llogfp) {
 				if(FunctGroupArray[species].isVertebrate == TRUE){
 				for(cohort = 0; cohort<FunctGroupArray[species].numCohortsXnumGenes; cohort++) {
 					for (ij = 0; ij < bm->nbox; ij++) {
-						if (bm->boxes[ij].type != BOUNDARY) {
+						if (ij == 34) {
 						for (k = 0; k < bm->boxes[ij].nz; k++) {
 
 							den = FunctGroupArray[species].NumsTracers[cohort];
