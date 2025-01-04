@@ -96,6 +96,7 @@ void Ecology_Annual(MSEBoxModel *bm, FILE *llogfp) {
 
     int sp;
     int do_debug;
+    int n, ij, k, den; // ALBI
 
 	if (bm->debug && ((bm->debug == debug_migrate) || (bm->debug == debug_spawn) || (bm->debug == debug_age) || (bm->debug == debug_recruit)
 			|| (bm->debug == debug_prey_biology_process))) {
@@ -105,6 +106,28 @@ void Ecology_Annual(MSEBoxModel *bm, FILE *llogfp) {
     
 	if (verbose > 0)
 		printf("First day of year so annual events are done first\n");
+
+    //ALBI
+	//Is DEN zeroed out before or after the start iof tjhis function?
+	for(sp = 0; sp < bm->K_num_tot_sp; sp++) {
+				if(FunctGroupArray[sp].isVertebrate == TRUE){
+				for(n = 0; n<FunctGroupArray[sp].numCohortsXnumGenes; n++) {
+					for (ij = 0; ij < bm->nbox; ij++) {
+						if (ij == 34) {
+						for (k = 0; k < bm->boxes[ij].nz; k++) {
+
+							den = FunctGroupArray[sp].NumsTracers[n];
+
+							fprintf(llogfp, "ALBI DEN DEBUG annual 1 Time: %e, box: %d-%d, Species: %s-%d, den_idx = %d, den = %e\n", 
+							bm->dayt, ij, k, FunctGroupArray[sp].groupCode, n, den, bm->boxes[ij].tr[k][den]);
+							
+						}
+						}
+					}
+				}
+			}
+	}
+	//ALBI END
 
 	/* First day of the year stuff. Note years go from day 0 to day	364 NOT day 1 to day 365! */
 
@@ -155,6 +178,28 @@ void Ecology_Annual(MSEBoxModel *bm, FILE *llogfp) {
     
     /* Check and update migration indices */
     Update_Migration_Index(bm, llogfp);
+
+    //ALBI
+	//Is DEN zeroed out before or after the start iof tjhis function?
+	for(sp = 0; sp < bm->K_num_tot_sp; sp++) {
+				if(FunctGroupArray[sp].isVertebrate == TRUE){
+				for(n = 0; n<FunctGroupArray[sp].numCohortsXnumGenes; n++) {
+					for (ij = 0; ij < bm->nbox; ij++) {
+						if (ij == 34) {
+						for (k = 0; k < bm->boxes[ij].nz; k++) {
+
+							den = FunctGroupArray[sp].NumsTracers[n];
+
+							fprintf(llogfp, "ALBI DEN DEBUG annual 2 Time: %e, box: %d-%d, Species: %s-%d, den_idx = %d, den = %e\n", 
+							bm->dayt, ij, k, FunctGroupArray[sp].groupCode, n, den, bm->boxes[ij].tr[k][den]);
+							
+						}
+						}
+					}
+				}
+			}
+	}
+	//ALBI END
 
 	return;
 }
