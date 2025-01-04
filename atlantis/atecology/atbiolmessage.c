@@ -871,7 +871,7 @@ void Ecology_Calculate_Total_Abundance(MSEBoxModel *bm, double dt, int call_type
     double num_rec = 0;
 	int cohort;
 	int isDiagnostic = call_type>0?1:0;
-	int den = 0; //ALBI
+	//int den = 0; //ALBI
 
 	flagstockout = 0;
 
