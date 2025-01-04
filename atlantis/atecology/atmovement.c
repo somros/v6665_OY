@@ -856,7 +856,7 @@ void Ecology_Total_Verts_And_Migration(MSEBoxModel *bm, double dt, FILE *llogfp)
     int do_debug2;
     int *mig_returners = Util_Alloc_Init_1D_Int(bm->K_num_tot_sp, 0);
 
-    //ALBI
+    /*//ALBI
 	//Is DEN zeroed out before or after the start iof tjhis function?
 	for(sp = 0; sp < bm->K_num_tot_sp; sp++) {
 				if(FunctGroupArray[sp].isVertebrate == TRUE){
@@ -876,7 +876,7 @@ void Ecology_Total_Verts_And_Migration(MSEBoxModel *bm, double dt, FILE *llogfp)
 				}
 			}
 	}
-	//ALBI END
+	//ALBI END*/
     
 	updated_already = 0;
 
@@ -2869,7 +2869,7 @@ void Ecology_Total_Verts_And_Migration(MSEBoxModel *bm, double dt, FILE *llogfp)
 	free1d(totad);
 	free1d(newden_sum);
 
-    //ALBI
+    /*//ALBI
 	//Is DEN zeroed out before or after the start iof tjhis function?
 	for(sp = 0; sp < bm->K_num_tot_sp; sp++) {
 				if(FunctGroupArray[sp].isVertebrate == TRUE){
@@ -2888,7 +2888,7 @@ void Ecology_Total_Verts_And_Migration(MSEBoxModel *bm, double dt, FILE *llogfp)
 					}
 				}
 			}
-	}
+	}*/
 
 
 	if (bm->debug && (mig_done && ((bm->debug == debug_migrate) || (bm->debug == debug_general)) && (bm->dayt > bm->checkstart)))

@@ -3494,7 +3494,7 @@ void Ecology_Update_Vertebrate_Cohorts(MSEBoxModel *bm, FILE *llogfp) {
 	//double totalDen = 0.0;
 	int *mig_status = Util_Alloc_Init_1D_Int(bm->K_num_max_stages, 0);
 
-	/*//ALBI
+	//ALBI
 	//Is DEN zeroed out before or after the start iof tjhis function?
 	for(species = 0; species < bm->K_num_tot_sp; species++) {
 				if(FunctGroupArray[species].isVertebrate == TRUE){
@@ -3505,7 +3505,7 @@ void Ecology_Update_Vertebrate_Cohorts(MSEBoxModel *bm, FILE *llogfp) {
 
 							den = FunctGroupArray[species].NumsTracers[cohort];
 
-							fprintf(llogfp, "ALBI DEN DEBUG L423 Time: %e, box: %d-%d, Species: %s-%d, den_idx = %d, den = %e\n", 
+							fprintf(llogfp, "ALBI DEN DEBUG L423-1 Time: %e, box: %d-%d, Species: %s-%d, den_idx = %d, den = %e\n", 
 							bm->dayt, ij, k, FunctGroupArray[species].groupCode, cohort, den, bm->boxes[ij].tr[k][den]);
 							
 						}
@@ -3514,7 +3514,7 @@ void Ecology_Update_Vertebrate_Cohorts(MSEBoxModel *bm, FILE *llogfp) {
 				}
 			}
 	}
-	//ALBI END*/
+	//ALBI END
     
 	tot_new_mat = (double *) alloc1d(bm->K_num_max_cohort * bm->K_num_max_genetypes);
 
@@ -3909,6 +3909,28 @@ void Ecology_Update_Vertebrate_Cohorts(MSEBoxModel *bm, FILE *llogfp) {
 
 	if (do_debug)
 		Check_Gape(bm, llogfp);
+
+	//ALBI
+	//Is DEN zeroed out before or after the start iof tjhis function?
+	for(species = 0; species < bm->K_num_tot_sp; species++) {
+				if(FunctGroupArray[species].isVertebrate == TRUE){
+				for(cohort = 0; cohort<FunctGroupArray[species].numCohortsXnumGenes; cohort++) {
+					for (ij = 0; ij < bm->nbox; ij++) {
+						if (ij == 34) {
+						for (k = 0; k < bm->boxes[ij].nz; k++) {
+
+							den = FunctGroupArray[species].NumsTracers[cohort];
+
+							fprintf(llogfp, "ALBI DEN DEBUG L423-2 Time: %e, box: %d-%d, Species: %s-%d, den_idx = %d, den = %e\n", 
+							bm->dayt, ij, k, FunctGroupArray[species].groupCode, cohort, den, bm->boxes[ij].tr[k][den]);
+							
+						}
+						}
+					}
+				}
+			}
+	}
+	//ALBI END
 
 	return;
 
