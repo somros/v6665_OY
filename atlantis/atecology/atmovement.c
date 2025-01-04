@@ -855,6 +855,28 @@ void Ecology_Total_Verts_And_Migration(MSEBoxModel *bm, double dt, FILE *llogfp)
 	double some_ice = 0.0, ice_effect;
     int do_debug2;
     int *mig_returners = Util_Alloc_Init_1D_Int(bm->K_num_tot_sp, 0);
+
+    //ALBI
+	//Is DEN zeroed out before or after the start iof tjhis function?
+	for(sp = 0; sp < bm->K_num_tot_sp; sp++) {
+				if(FunctGroupArray[sp].isVertebrate == TRUE){
+				for(n = 0; n<FunctGroupArray[sp].numCohortsXnumGenes; n++) {
+					for (ij = 0; ij < bm->nbox; ij++) {
+						if (ij == 34) {
+						for (k = 0; k < bm->boxes[ij].nz; k++) {
+
+							den = FunctGroupArray[sp].NumsTracers[n];
+
+							fprintf(llogfp, "ALBI DEN DEBUG move 1 Time: %e, box: %d-%d, Species: %s-%d, den_idx = %d, den = %e\n", 
+							bm->dayt, ij, k, FunctGroupArray[sp].groupCode, n, den, bm->boxes[ij].tr[k][den]);
+							
+						}
+						}
+					}
+				}
+			}
+	}
+	//ALBI END
     
 	updated_already = 0;
 
@@ -2846,6 +2868,27 @@ void Ecology_Total_Verts_And_Migration(MSEBoxModel *bm, double dt, FILE *llogfp)
 	free1d(totroc);
 	free1d(totad);
 	free1d(newden_sum);
+
+    //ALBI
+	//Is DEN zeroed out before or after the start iof tjhis function?
+	for(sp = 0; sp < bm->K_num_tot_sp; sp++) {
+				if(FunctGroupArray[sp].isVertebrate == TRUE){
+				for(n = 0; n<FunctGroupArray[sp].numCohortsXnumGenes; n++) {
+					for (ij = 0; ij < bm->nbox; ij++) {
+						if (ij == 34) {
+						for (k = 0; k < bm->boxes[ij].nz; k++) {
+
+							den = FunctGroupArray[sp].NumsTracers[n];
+
+							fprintf(llogfp, "ALBI DEN DEBUG move 2 Time: %e, box: %d-%d, Species: %s-%d, den_idx = %d, den = %e\n", 
+							bm->dayt, ij, k, FunctGroupArray[sp].groupCode, n, den, bm->boxes[ij].tr[k][den]);
+							
+						}
+						}
+					}
+				}
+			}
+	}
 
 
 	if (bm->debug && (mig_done && ((bm->debug == debug_migrate) || (bm->debug == debug_general)) && (bm->dayt > bm->checkstart)))

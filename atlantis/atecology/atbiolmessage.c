@@ -871,11 +871,11 @@ void Ecology_Calculate_Total_Abundance(MSEBoxModel *bm, double dt, int call_type
     double num_rec = 0;
 	int cohort;
 	int isDiagnostic = call_type>0?1:0;
-	int den = 0;
+	int den = 0; //ALBI
 
 	flagstockout = 0;
 
-	//ALBI
+	/*//ALBI
 	//Is DEN zeroed out before or after the start iof tjhis function?
 	for(sp = 0; sp < bm->K_num_tot_sp; sp++) {
 				if(FunctGroupArray[sp].isVertebrate == TRUE){
@@ -895,7 +895,7 @@ void Ecology_Calculate_Total_Abundance(MSEBoxModel *bm, double dt, int call_type
 				}
 			}
 	}
-	//ALBI END
+	//ALBI END*/
 
 	if (verbose > 0)
 		printf("Doing Ecology_Calculate_Total_Abundance\n");

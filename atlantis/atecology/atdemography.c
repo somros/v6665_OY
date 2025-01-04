@@ -3494,7 +3494,7 @@ void Ecology_Update_Vertebrate_Cohorts(MSEBoxModel *bm, FILE *llogfp) {
 	//double totalDen = 0.0;
 	int *mig_status = Util_Alloc_Init_1D_Int(bm->K_num_max_stages, 0);
 
-	//ALBI
+	/*//ALBI
 	//Is DEN zeroed out before or after the start iof tjhis function?
 	for(species = 0; species < bm->K_num_tot_sp; species++) {
 				if(FunctGroupArray[species].isVertebrate == TRUE){
@@ -3514,7 +3514,7 @@ void Ecology_Update_Vertebrate_Cohorts(MSEBoxModel *bm, FILE *llogfp) {
 				}
 			}
 	}
-	//ALBI END
+	//ALBI END*/
     
 	tot_new_mat = (double *) alloc1d(bm->K_num_max_cohort * bm->K_num_max_genetypes);
 
