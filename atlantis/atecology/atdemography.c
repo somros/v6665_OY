@@ -3493,6 +3493,28 @@ void Ecology_Update_Vertebrate_Cohorts(MSEBoxModel *bm, FILE *llogfp) {
     //double diff;
 	//double totalDen = 0.0;
 	int *mig_status = Util_Alloc_Init_1D_Int(bm->K_num_max_stages, 0);
+
+	//ALBI
+	//Is DEN zeroed out before or after the start iof tjhis function?
+	for(species = 0; species < bm->K_num_tot_sp; species++) {
+				if(FunctGroupArray[species].isVertebrate == TRUE){
+				for(cohort = 0; cohort<FunctGroupArray[species].numCohortsXnumGenes; cohort++) {
+					for (ij = 0; ij < bm->nbox; ij++) {
+						if (bm->boxes[ij].type != BOUNDARY) {
+						for (k = 0; k < bm->boxes[ij].nz; k++) {
+
+							den = FunctGroupArray[species].NumsTracers[nextcid];
+
+							fprintf(llogfp, "ALBI DEN DEBUG Time: %e, box: %d-%d, Species: %s-%d, den = %e\n", 
+							bm->dayt, ij, k, FunctGroupArray[species].groupCode, cohort, bm->boxes[ij].tr[k][den]);
+							
+						}
+						}
+					}
+				}
+			}
+	}
+	//ALBI END
     
 	tot_new_mat = (double *) alloc1d(bm->K_num_max_cohort * bm->K_num_max_genetypes);
 
@@ -3540,8 +3562,8 @@ void Ecology_Update_Vertebrate_Cohorts(MSEBoxModel *bm, FILE *llogfp) {
 				/* Record final numbers if needed */
                 if(bm->M_est_method == Z_and_F_based) {
 
-				fprintf(llogfp, "ALBI M DEBUG 1 Time: %e, %s, made it into if statement\n",
-										bm->dayt, FunctGroupArray[species].groupCode);
+				//fprintf(llogfp, "ALBI M DEBUG 1 Time: %e, %s, made it into if statement\n",
+										//bm->dayt, FunctGroupArray[species].groupCode);
 									
                     Record_End_Num(bm, species, llogfp);
                 }
