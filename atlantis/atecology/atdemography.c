@@ -3503,10 +3503,10 @@ void Ecology_Update_Vertebrate_Cohorts(MSEBoxModel *bm, FILE *llogfp) {
 						if (bm->boxes[ij].type != BOUNDARY) {
 						for (k = 0; k < bm->boxes[ij].nz; k++) {
 
-							den = FunctGroupArray[species].NumsTracers[nextcid];
+							den = FunctGroupArray[species].NumsTracers[cohort];
 
-							fprintf(llogfp, "ALBI DEN DEBUG Time: %e, box: %d-%d, Species: %s-%d, den = %e\n", 
-							bm->dayt, ij, k, FunctGroupArray[species].groupCode, cohort, bm->boxes[ij].tr[k][den]);
+							fprintf(llogfp, "ALBI DEN DEBUG Time: %e, box: %d-%d, Species: %s-%d, den_idx = %d, den = %e\n", 
+							bm->dayt, ij, k, FunctGroupArray[species].groupCode, cohort, den, bm->boxes[ij].tr[k][den]);
 							
 						}
 						}
