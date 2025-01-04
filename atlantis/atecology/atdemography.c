@@ -3494,7 +3494,7 @@ void Ecology_Update_Vertebrate_Cohorts(MSEBoxModel *bm, FILE *llogfp) {
 	//double totalDen = 0.0;
 	int *mig_status = Util_Alloc_Init_1D_Int(bm->K_num_max_stages, 0);
 
-	//ALBI
+	/*//ALBI
 	//Is DEN zeroed out before or after the start iof tjhis function?
 	for(species = 0; species < bm->K_num_tot_sp; species++) {
 				if(FunctGroupArray[species].isVertebrate == TRUE){
@@ -3514,7 +3514,7 @@ void Ecology_Update_Vertebrate_Cohorts(MSEBoxModel *bm, FILE *llogfp) {
 				}
 			}
 	}
-	//ALBI END
+	//ALBI END*/
     
 	tot_new_mat = (double *) alloc1d(bm->K_num_max_cohort * bm->K_num_max_genetypes);
 
@@ -3562,8 +3562,8 @@ void Ecology_Update_Vertebrate_Cohorts(MSEBoxModel *bm, FILE *llogfp) {
 				/* Record final numbers if needed */
                 if(bm->M_est_method == Z_and_F_based) {
 
-				//fprintf(llogfp, "ALBI M DEBUG 1 Time: %e, %s, made it into if statement\n",
-										//bm->dayt, FunctGroupArray[species].groupCode);
+				fprintf(llogfp, "ALBI M DEBUG 1 Time: %e, %s, made it into if statement - need_update: %d\n",
+										bm->dayt, FunctGroupArray[species].groupCode, need_update);
 									
                     Record_End_Num(bm, species, llogfp);
                 }
@@ -3910,7 +3910,7 @@ void Ecology_Update_Vertebrate_Cohorts(MSEBoxModel *bm, FILE *llogfp) {
 	if (do_debug)
 		Check_Gape(bm, llogfp);
 
-	//ALBI
+	/*//ALBI
 	//Is DEN zeroed out before or after the start iof tjhis function?
 	for(species = 0; species < bm->K_num_tot_sp; species++) {
 				if(FunctGroupArray[species].isVertebrate == TRUE){
@@ -3930,7 +3930,7 @@ void Ecology_Update_Vertebrate_Cohorts(MSEBoxModel *bm, FILE *llogfp) {
 				}
 			}
 	}
-	//ALBI END
+	//ALBI END*/
 
 	return;
 
