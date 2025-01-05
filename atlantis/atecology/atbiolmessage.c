@@ -196,6 +196,8 @@ void Ecology_Starve_Notice(MSEBoxModel *bm, FILE *llogfp) {
 
 	int ij, k, starve_now;
 
+	int sp, n, den; //ALBI
+
 	if (!bm->flagstarve)
 		return;
 
@@ -218,6 +220,28 @@ void Ecology_Starve_Notice(MSEBoxModel *bm, FILE *llogfp) {
 			}
 		}
 	}
+
+	//ALBI
+	//Is DEN zeroed out before or after the start iof tjhis function?
+	for(sp = 0; sp < bm->K_num_tot_sp; sp++) {
+				if(FunctGroupArray[sp].isVertebrate == TRUE){
+				for(n = 0; n<FunctGroupArray[sp].numCohortsXnumGenes; n++) {
+					for (ij = 0; ij < bm->nbox; ij++) {
+						if (ij == 34) {
+						for (k = 0; k < bm->boxes[ij].nz; k++) {
+
+							den = FunctGroupArray[sp].NumsTracers[n];
+
+							fprintf(llogfp, "ALBI DEN DEBUG L490 Time: %e, box: %d-%d, Species: %s-%d, den_idx = %d, den = %e\n", 
+							bm->dayt, ij, k, FunctGroupArray[sp].groupCode, n, den, bm->boxes[ij].tr[k][den]);
+							
+						}
+						}
+					}
+				}
+			}
+	}
+	//ALBI END
 
 	return;
 }
