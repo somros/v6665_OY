@@ -68,6 +68,8 @@ void Ecology_Time_Check(MSEBoxModel *bm, double t, double dt, FILE *llogfp) {
 	int i, j;
 	double PointInYear;
 
+	int sp, n, ij, k, den; //ALBI
+
 	if (verbose > 1)
 		printf("checking the time\n");
 
@@ -99,6 +101,28 @@ void Ecology_Time_Check(MSEBoxModel *bm, double t, double dt, FILE *llogfp) {
 	/* Determine activitiy states of dynamic components */
 	Bio_Active(bm, llogfp);
 	Harvest_Set_Fishery_Active(bm, llogfp);
+
+	//ALBI
+	//Is DEN zeroed out before or after the start iof tjhis function?
+	for(sp = 0; sp < bm->K_num_tot_sp; sp++) {
+				if(FunctGroupArray[sp].isVertebrate == TRUE){
+				for(n = 0; n<FunctGroupArray[sp].numCohortsXnumGenes; n++) {
+					for (ij = 0; ij < bm->nbox; ij++) {
+						if (ij == 34) {
+						for (k = 0; k < bm->boxes[ij].nz; k++) {
+
+							den = FunctGroupArray[sp].NumsTracers[n];
+
+							fprintf(llogfp, "ALBI DEN DEBUG L228 Time: %e, box: %d-%d, Species: %s-%d, den_idx = %d, den = %e\n", 
+							bm->dayt, ij, k, FunctGroupArray[sp].groupCode, n, den, bm->boxes[ij].tr[k][den]);
+							
+						}
+						}
+					}
+				}
+			}
+	}
+	//ALBI END
 
 	return;
 }
