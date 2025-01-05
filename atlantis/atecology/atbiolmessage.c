@@ -196,7 +196,7 @@ void Ecology_Starve_Notice(MSEBoxModel *bm, FILE *llogfp) {
 
 	int ij, k, starve_now;
 
-	int sp, n, den; //ALBI
+	//int sp, n, den; //ALBI
 
 	if (!bm->flagstarve)
 		return;
@@ -221,7 +221,7 @@ void Ecology_Starve_Notice(MSEBoxModel *bm, FILE *llogfp) {
 		}
 	}
 
-	//ALBI
+	/*//ALBI
 	//Is DEN zeroed out before or after the start iof tjhis function?
 	for(sp = 0; sp < bm->K_num_tot_sp; sp++) {
 				if(FunctGroupArray[sp].isVertebrate == TRUE){
@@ -241,7 +241,7 @@ void Ecology_Starve_Notice(MSEBoxModel *bm, FILE *llogfp) {
 				}
 			}
 	}
-	//ALBI END
+	//ALBI END*/
 
 	return;
 }
@@ -314,11 +314,11 @@ void Calculate_Box_Biomass(MSEBoxModel *bm, FILE *llogfp, int ij, int nreg, int 
 						//}
 
 						
-                            if((sp == 16) && (bm->dayt == 94.5) && (ij == 34)){
-								fprintf(llogfp, "ALBI TIme: %e in calc_box_biom %s-%d in box %d-%d totbiom[sp]: %.20e, sn = %.20e, rn = %.20e, den = %.20e, den_idx = %d\n",
-									bm->dayt, FunctGroupArray[sp].groupCode, n, ij, k, bm->totbiom[sp], bm->boxes[ij].tr[k][sn],
-									bm->boxes[ij].tr[k][rn], bm->boxes[ij].tr[k][den], den);
-							}
+                            //if((sp == 16) && (bm->dayt == 94.5) && (ij == 34)){
+								//fprintf(llogfp, "ALBI TIme: %e in calc_box_biom %s-%d in box %d-%d totbiom[sp]: %.20e, sn = %.20e, rn = %.20e, den = %.20e, den_idx = %d\n",
+									//bm->dayt, FunctGroupArray[sp].groupCode, n, ij, k, bm->totbiom[sp], bm->boxes[ij].tr[k][sn],
+									//bm->boxes[ij].tr[k][rn], bm->boxes[ij].tr[k][den], den);
+							//}
 
 							//ALBI DEBUG END
 							
