@@ -2011,6 +2011,9 @@ void Ecosystem_Cap_Frescale(MSEBoxModel *bm, FILE *llogfp) {
                                 tot_expect_catch += this_expect_catch;
 
                                 fprintf(llogfp, "OY DEBUG 8.1: Time: %e %s-%d %s, this_Num: %e, Wgt: %e, this_Biom: %e\n", bm->dayt, FunctGroupArray[sp].groupCode, nc, FisheryArray[nf].fisheryCode, this_Num, Wgt, this_Biom);
+                            } else { //ALBI: addingt this here so that below in the unallocated excess part we have sensible this_expect_catch
+                                this_expect_catch = 0.0;
+                                tot_expect_catch += this_expect_catch;
                             }
                         } else {
                             if (!bm->use_time_avg_biom) {
@@ -2053,7 +2056,7 @@ void Ecosystem_Cap_Frescale(MSEBoxModel *bm, FILE *llogfp) {
         //ALBI: adding some code so that any unallocated deductions go to other stocks
         // For now simply giving it to the stock with the highest ABC, assuming that it has either high biom or high econ interest or both
         // This will need to be coupled with careful weighting or else there will be very large slicing of ABCs
-        double orig_catch;
+        double orig_catch = 0;
         double max_orig_catch = 0;
         int max_catch_sp = -1;
         double unalloc_excess = 0;
@@ -2067,10 +2070,10 @@ void Ecosystem_Cap_Frescale(MSEBoxModel *bm, FILE *llogfp) {
                     max_orig_catch = orig_catch;
                     max_catch_sp = sp;
                 }
+
+                fprintf(llogfp, "OY DEBUG 11: Time: %e %s, orig_catch: %e, max_orig_catch: %e, max_catch_sp: %d\n", bm->dayt, FunctGroupArray[sp].groupCode, orig_catch, max_orig_catch, max_catch_sp);
+
             }
-
-            fprintf(llogfp, "OY DEBUG 11: Time: %e %s, orig_catch: %e, max_orig_catch: %e, max_catch_sp: %d\n", bm->dayt, FunctGroupArray[sp].groupCode, orig_catch, max_orig_catch, max_catch_sp);
-
         }
         
         for (sp = 0; sp < bm->K_num_tot_sp; sp++) {
@@ -2110,6 +2113,11 @@ void Ecosystem_Cap_Frescale(MSEBoxModel *bm, FILE *llogfp) {
             sp = max_catch_sp;
             orig_expected_catch = FunctGroupArray[sp].speciesParams[sp_fishery_expected_catch_id];
              // Only apply the additional unallocated excess
+            if (unalloc_excess > orig_expected_catch) {
+                unalloc_excess = orig_expected_catch;
+                fprintf(llogfp, "WARNING: Time: %e, unalloc_excess %e is larger than orig_expected_catch %e for species %s\n", bm->dayt, unalloc_excess, orig_expected_catch, FunctGroupArray[sp].groupCode);
+            }
+
             additional_rescale = (orig_expected_catch - unalloc_excess) / orig_expected_catch;
     
             for (nf = 0; nf < bm->K_num_fisheries; nf++) {
