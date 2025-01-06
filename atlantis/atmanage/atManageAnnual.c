@@ -2049,6 +2049,29 @@ void Ecosystem_Cap_Frescale(MSEBoxModel *bm, FILE *llogfp) {
 
         //fprintf(llogfp, "CHECKPOINT 10\n");
         fprintf(llogfp, "OY DEBUG 10: Time: %e Ecosystm_Cap_tonnes: %e, tot_expect_catch, %e, excess: %e\n", bm->dayt, bm->Ecosystm_Cap_tonnes, tot_expect_catch, excess);
+
+        //ALBI: adding some code so that any unallocated deductions go to other stocks
+        // For now simply giving it to the stock with the highest ABC, assuming that it has either high biom or high econ interest or both
+        // This will need to be coupled with careful weighting or else there will be very large slicing of ABCs
+        double orig_catch;
+        double max_orig_catch = 0;
+        int max_catch_sp = -1;
+        double unalloc_excess = 0;
+        double additional_rescale = 1;
+
+        for (sp = 0; sp < bm->K_num_tot_sp; sp++) {
+            if (FunctGroupArray[sp].isFished == TRUE && FunctGroupArray[sp].speciesParams[flagFonly_id] && FunctGroupArray[sp].speciesParams[flag_systcap_sp_id]) { // only do it for OY spp
+        
+                orig_catch = FunctGroupArray[sp].speciesParams[sp_fishery_expected_catch_id];
+                if (orig_catch > max_orig_catch) {
+                    max_orig_catch = orig_catch;
+                    max_catch_sp = sp;
+                }
+            }
+
+            fprintf(llogfp, "OY DEBUG 11: Time: %e %s, orig_catch: %e, max_orig_catch: %e, max_catch_sp: %d\n", bm->dayt, FunctGroupArray[sp].groupCode, orig_catch, max_orig_catch, max_catch_sp);
+
+        }
         
         for (sp = 0; sp < bm->K_num_tot_sp; sp++) {
             if (FunctGroupArray[sp].isFished == TRUE) {
@@ -2063,15 +2086,37 @@ void Ecosystem_Cap_Frescale(MSEBoxModel *bm, FILE *llogfp) {
                 orig_expected_catch = FunctGroupArray[sp].speciesParams[sp_fishery_expected_catch_id];
                 if (orig_expected_catch) { // only both of expected catch is non-zero
                     new_expected_catch = orig_expected_catch - deductions;
+
+                    //ALBI: adding catch for negative expected catch and add to unallocated deductions
+                    if (new_expected_catch < 0) {
+                        unalloc_excess += -1.0 * new_expected_catch;
+                        new_expected_catch = 0;
+                    }
+
                     rescale_scalar = (new_expected_catch / orig_expected_catch);
                     for (nf = 0; nf < bm->K_num_fisheries; nf++) {
                         bm->SP_FISHERYprms[sp][nf][orig_mFC_scale_id] = bm->SP_FISHERYprms[sp][nf][mFC_scale_id]; // For reporting purposes
                         bm->SP_FISHERYprms[sp][nf][mFC_scale_id] *= rescale_scalar;
 
                         //fprintf(llogfp, "CHECKPOINT 11\n");
-                        fprintf(llogfp, "OY DEBUG 11: Time: %e %s %s, deductions: %e, orig_expected_catch: %e, new_expected_catch: %e, rescale_scalar: %e, orig_F_rescale: %e, new_F_rescale: %e\n", bm->dayt, FunctGroupArray[sp].groupCode, FisheryArray[nf].fisheryCode, deductions, orig_expected_catch, new_expected_catch, rescale_scalar, bm->SP_FISHERYprms[sp][nf][orig_mFC_scale_id], bm->SP_FISHERYprms[sp][nf][mFC_scale_id]);
+                        fprintf(llogfp, "OY DEBUG 12: Time: %e %s %s, deductions: %e, orig_expected_catch: %e, new_expected_catch: %e, rescale_scalar: %e, orig_F_rescale: %e, new_F_rescale: %e\n", bm->dayt, FunctGroupArray[sp].groupCode, FisheryArray[nf].fisheryCode, deductions, orig_expected_catch, new_expected_catch, rescale_scalar, bm->SP_FISHERYprms[sp][nf][orig_mFC_scale_id], bm->SP_FISHERYprms[sp][nf][mFC_scale_id]);
                     }
                 }
+            }
+        }
+
+        //ALBI: if there is still any unallocated excess, give it to the stock with highest ABC
+        if (unalloc_excess > 0 && max_catch_sp >= 0) {
+            sp = max_catch_sp;
+            orig_expected_catch = FunctGroupArray[sp].speciesParams[sp_fishery_expected_catch_id];
+             // Only apply the additional unallocated excess
+            additional_rescale = (orig_expected_catch - unalloc_excess) / orig_expected_catch;
+    
+            for (nf = 0; nf < bm->K_num_fisheries; nf++) {
+                bm->SP_FISHERYprms[sp][nf][mFC_scale_id] *= additional_rescale;
+
+                fprintf(llogfp, "OY DEBUG 13: Time: %e %s %s, orig_expected_catch: %e, unalloc_excess: %e, additional_rescale: %e, mFC_scale_id: %e\n", bm->dayt, FunctGroupArray[sp].groupCode, FisheryArray[nf].fisheryCode, orig_expected_catch, unalloc_excess, additional_rescale, bm->SP_FISHERYprms[sp][nf][mFC_scale_id]);
+
             }
         }
     }
