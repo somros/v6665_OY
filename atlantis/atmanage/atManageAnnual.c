@@ -2010,7 +2010,7 @@ void Ecosystem_Cap_Frescale(MSEBoxModel *bm, FILE *llogfp) {
                                 this_expect_catch = this_Biom * (expectF / Catch_Eqn_Denom) * survival;
                                 tot_expect_catch += this_expect_catch;
 
-                                fprintf(llogfp, "OY DEBUG 8.1: Time: %e %s-%d %s, this_Num: %e, Wgt: %e, this_Biom: %e\n", bm->dayt, FunctGroupArray[sp].groupCode, nc, FisheryArray[nf].fisheryCode, this_Num, Wgt, this_Biom);
+                                fprintf(llogfp, "OY DEBUG 8.1: Time: %e %s-%d %s, this_Num: %e, Wgt: %e, this_Biom: %e\n", bm->dayt, FunctGroupArray[sp].groupCode, nc, FisheryArray[nf].fisheryCode, this_Num, Wgt * bm->X_CN * mg_2_tonne, this_Biom);
                             } else { //ALBI: addingt this here so that below in the unallocated excess part we have sensible this_expect_catch
                                 this_expect_catch = 0.0;
                                 tot_expect_catch += this_expect_catch;
@@ -2029,14 +2029,17 @@ void Ecosystem_Cap_Frescale(MSEBoxModel *bm, FILE *llogfp) {
                             }
                             this_expect_catch = mFC * mpa_scale * mFC_change_scale * sel * this_Biom * bm->X_CN * mg_2_tonne;
                             tot_expect_catch += this_expect_catch;
+
+                            fprintf(llogfp, "OY DEBUG 8.1: Time: %e %s-%d %s, this_expect_catch: %e, mFC: %e, mpa_scale: %e, mFC_change_scale: %e, sel: %e, this_Biom: %e, tot_expect_catch: %e\n", 
+                            bm->dayt, FunctGroupArray[sp].groupCode, nc, FisheryArray[nf].fisheryCode, this_expect_catch, mFC, mpa_scale, mFC_change_scale, sel, this_Biom * bm->X_CN * mg_2_tonne, tot_expect_catch);
+
                         }
                         FunctGroupArray[sp].speciesParams[sp_fishery_expected_catch_id] += this_expect_catch;
 
                         fprintf(llogfp, "OY DEBUG 8.2: Time: %e %s-%d %s, this_expect_catch: %e, sp_fishery_expected_catch: %e\n", bm->dayt, FunctGroupArray[sp].groupCode, nc, FisheryArray[nf].fisheryCode, this_expect_catch, FunctGroupArray[sp].speciesParams[sp_fishery_expected_catch_id]);
 
-
                         //fprintf(llogfp, "CHECKPOINT 9\n");
-                        fprintf(llogfp, "OY DEBUG 9: Time: %e %s-%d %s, this_Biom: %e, this_expect_catch: %e, tot_expect_catch: %e\n", bm->dayt, FunctGroupArray[sp].groupCode, nc, FisheryArray[nf].fisheryCode, this_Biom, this_expect_catch, tot_expect_catch);
+                        fprintf(llogfp, "OY DEBUG 9: Time: %e %s-%d %s, this_Biom: %e, this_expect_catch: %e, tot_expect_catch: %e\n", bm->dayt, FunctGroupArray[sp].groupCode, nc, FisheryArray[nf].fisheryCode, this_Biom * bm->X_CN * mg_2_tonne, this_expect_catch, tot_expect_catch);
 
                         // ALBI: now reset this_expect_catch to 0
                         this_expect_catch = 0.0;                

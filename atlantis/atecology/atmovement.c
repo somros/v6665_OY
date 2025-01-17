@@ -145,7 +145,7 @@
 #include <atHarvestLib.h>
 
 /* Prototypes */
-void Store_Min_Max_Avg(MSEBoxModel *bm, int sp);
+void Store_Min_Max_Avg(MSEBoxModel *bm, int sp, FILE *llogfp);
 
 static double Calculate_Migration_Proportion(MSEBoxModel *bm, FILE *llogfp, double dt, int sp, double start, double period, double IOBox){
 	double migtime2;
@@ -705,7 +705,7 @@ double Get_Enviro_Move_Scalar(int flag_sensitive_sp, double current_enviro, doub
     return numScalar;
 }
 
-void Store_Min_Max_Avg(MSEBoxModel *bm, int sp) {
+void Store_Min_Max_Avg(MSEBoxModel *bm, int sp, FILE *llogfp) {
     int n, nlist;
     double this_wgt, this_biom;
     double this_denom = (double)(bm->K_rolling_cap_num);
@@ -752,10 +752,16 @@ void Store_Min_Max_Avg(MSEBoxModel *bm, int sp) {
                     for ( nlist = 0; nlist < bm->K_rolling_cap_num; nlist++) {
                         FunctGroupArray[sp].rolling_wgt[n][nlist] = this_wgt;
                         FunctGroupArray[sp].rolling_B[n][nlist] = this_biom;
+
+                        fprintf(llogfp, "Albi Roll 1: Time: %e %s-%d, nlist: %d of K_rolling_cap_num: %d, this_biom: %e\n", bm->dayt, FunctGroupArray[sp].groupCode, n, nlist, bm->K_rolling_cap_num, this_biom * bm->X_CN * mg_2_tonne);
+
                     }
                     FunctGroupArray[sp].rolling_wgt[n][bm->K_rolling_cap_num] = this_wgt;
                     FunctGroupArray[sp].rolling_B[n][bm->K_rolling_cap_num] = this_biom;
                     bm->rolling_cap_initialised[sp][n] = 1;
+
+                    fprintf(llogfp, "Albi Roll 2: Time: %e %s-%d, LAST this_biom: %e\n", bm->dayt, FunctGroupArray[sp].groupCode, n, this_biom * bm->X_CN * mg_2_tonne);
+
                 } else {
                     if ( bm->newmonth) {
                         for ( nlist = 0; nlist < (bm->K_rolling_cap_num - 1); nlist++) {
@@ -768,6 +774,9 @@ void Store_Min_Max_Avg(MSEBoxModel *bm, int sp) {
                             FunctGroupArray[sp].rolling_B[n][nlist] = FunctGroupArray[sp].rolling_B[n][nlist + 1];
                             this_sum_W += FunctGroupArray[sp].rolling_wgt[n][nlist];
                             this_sum_B += FunctGroupArray[sp].rolling_B[n][nlist];
+                        
+                            fprintf(llogfp, "Albi Roll 3: Time: %e %s-%d, nlist: %d of %d, this_sum_B: %e\n", bm->dayt, FunctGroupArray[sp].groupCode, n, nlist, bm->K_rolling_cap_num - 1, this_sum_B * bm->X_CN * mg_2_tonne);
+
                         }
                         FunctGroupArray[sp].rolling_wgt[n][bm->K_rolling_cap_num - 1] = this_wgt;
                         FunctGroupArray[sp].rolling_B[n][bm->K_rolling_cap_num - 1] = this_biom;
@@ -775,6 +784,10 @@ void Store_Min_Max_Avg(MSEBoxModel *bm, int sp) {
                         this_sum_B += this_biom;
                         FunctGroupArray[sp].rolling_wgt[n][bm->K_rolling_cap_num] = this_sum_W / this_denom;
                         FunctGroupArray[sp].rolling_B[n][bm->K_rolling_cap_num] = this_sum_B / this_denom;
+
+                        fprintf(llogfp, "Albi Roll 4: Time: %e %s-%d, this_biom: %e, this_sum_B: %e, this_denom: %e, 2nd to last value: %e, last value: %e\n", 
+                        bm->dayt, FunctGroupArray[sp].groupCode, n, this_biom  * bm->X_CN * mg_2_tonne, this_sum_B  * bm->X_CN * mg_2_tonne, FunctGroupArray[sp].rolling_B[n][bm->K_rolling_cap_num - 1] * bm->X_CN * mg_2_tonne, FunctGroupArray[sp].rolling_B[n][bm->K_rolling_cap_num] * bm->X_CN * mg_2_tonne);
+
                     }
                 }
 
@@ -1351,7 +1364,7 @@ void Ecology_Total_Verts_And_Migration(MSEBoxModel *bm, double dt, FILE *llogfp)
 
             /* Store diagnostics if needed for system cap calculations */
             if(bm->do_syst_cap) {
-                Store_Min_Max_Avg(bm, sp);
+                Store_Min_Max_Avg(bm, sp, llogfp);
             }
 
 			/* if a group doesn't move vertically or horizontally then skip */
@@ -3251,7 +3264,7 @@ void Ecology_Invert_Migration(MSEBoxModel *bm, double dt, FILE *llogfp) {
 
             /* Store diagnostics if needed for system cap calculations */
             if(bm->do_syst_cap) {
-                Store_Min_Max_Avg(bm, sp);
+                Store_Min_Max_Avg(bm, sp, llogfp);
             }
             
             for (cohort = 0; cohort < FunctGroupArray[fgIndex].numCohortsXnumGenes; cohort++) {
