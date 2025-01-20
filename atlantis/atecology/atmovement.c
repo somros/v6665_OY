@@ -753,14 +753,14 @@ void Store_Min_Max_Avg(MSEBoxModel *bm, int sp, FILE *llogfp) {
                         FunctGroupArray[sp].rolling_wgt[n][nlist] = this_wgt;
                         FunctGroupArray[sp].rolling_B[n][nlist] = this_biom;
 
-                        //fprintf(llogfp, "Albi Roll 1: Time: %e %s-%d, nlist: %d of %d, this_biom: %e\n", bm->dayt, FunctGroupArray[sp].groupCode, n, nlist, bm->K_rolling_cap_num, this_biom * bm->X_CN * mg_2_tonne);
+                        fprintf(llogfp, "Albi Roll 1: Time: %e %s-%d, nlist: %d of %d, this_biom: %e\n", bm->dayt, FunctGroupArray[sp].groupCode, n, nlist, bm->K_rolling_cap_num, this_biom);
 
                     }
                     FunctGroupArray[sp].rolling_wgt[n][bm->K_rolling_cap_num] = this_wgt;
                     FunctGroupArray[sp].rolling_B[n][bm->K_rolling_cap_num] = this_biom;
                     bm->rolling_cap_initialised[sp][n] = 1;
 
-                    //fprintf(llogfp, "Albi Roll 2: Time: %e %s-%d, LAST this_biom: %e\n", bm->dayt, FunctGroupArray[sp].groupCode, n, this_biom * bm->X_CN * mg_2_tonne);
+                    fprintf(llogfp, "Albi Roll 2: Time: %e %s-%d, LAST this_biom: %e\n", bm->dayt, FunctGroupArray[sp].groupCode, n, this_biom);
 
                 } else {
                     if ( bm->newmonth) {
@@ -775,7 +775,7 @@ void Store_Min_Max_Avg(MSEBoxModel *bm, int sp, FILE *llogfp) {
                             this_sum_W += FunctGroupArray[sp].rolling_wgt[n][nlist];
                             this_sum_B += FunctGroupArray[sp].rolling_B[n][nlist];
                         
-                            //fprintf(llogfp, "Albi Roll 3: Time: %e %s-%d, nlist: %d of %d, this_sum_B: %e\n", bm->dayt, FunctGroupArray[sp].groupCode, n, nlist, bm->K_rolling_cap_num - 1, this_sum_B * bm->X_CN * mg_2_tonne);
+                            fprintf(llogfp, "Albi Roll 3: Time: %e %s-%d, nlist: %d of %d, biom at nlist: %e, biom at nlist+1: %e\n", bm->dayt, FunctGroupArray[sp].groupCode, n, nlist, bm->K_rolling_cap_num - 1, FunctGroupArray[sp].rolling_B[n][nlist], FunctGroupArray[sp].rolling_B[n][nlist + 1]);
 
                         }
                         FunctGroupArray[sp].rolling_wgt[n][bm->K_rolling_cap_num - 1] = this_wgt;
@@ -785,8 +785,8 @@ void Store_Min_Max_Avg(MSEBoxModel *bm, int sp, FILE *llogfp) {
                         FunctGroupArray[sp].rolling_wgt[n][bm->K_rolling_cap_num] = this_sum_W / this_denom;
                         FunctGroupArray[sp].rolling_B[n][bm->K_rolling_cap_num] = this_sum_B / this_denom;
 
-                        //fprintf(llogfp, "Albi Roll 4: Time: %e %s-%d, this_biom: %e, this_sum_B: %e, this_denom: %e, 2nd to last value: %e, last value: %e\n", 
-                        //bm->dayt, FunctGroupArray[sp].groupCode, n, this_biom  * bm->X_CN * mg_2_tonne, this_sum_B  * bm->X_CN * mg_2_tonne, this_denom, FunctGroupArray[sp].rolling_B[n][bm->K_rolling_cap_num - 1] * bm->X_CN * mg_2_tonne, FunctGroupArray[sp].rolling_B[n][bm->K_rolling_cap_num] * bm->X_CN * mg_2_tonne);
+                        fprintf(llogfp, "Albi Roll 4: Time: %e %s-%d, this_biom: %e, this_sum_B: %e, this_denom: %e, 2nd to last value: %e, last value: %e\n", 
+                        bm->dayt, FunctGroupArray[sp].groupCode, n, this_biom, this_sum_B, this_denom, FunctGroupArray[sp].rolling_B[n][bm->K_rolling_cap_num - 1], FunctGroupArray[sp].rolling_B[n][bm->K_rolling_cap_num]);
 
                     }
                 }
