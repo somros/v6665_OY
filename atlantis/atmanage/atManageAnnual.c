@@ -1703,8 +1703,10 @@ void Ecosystem_Cap_Frescale(MSEBoxModel *bm, FILE *llogfp) {
 
             
             switch (tier) {
-                case tier0: // Intentional flow throgh for all these cases
-                case tier1:
+                case tier0: 
+                    FTARG = FrefA;
+                    break;
+                case tier1:     // Intentional flow throgh for all these cases
                 case tier2:
                 case tier3:
                 case tier4:
@@ -1785,8 +1787,10 @@ void Ecosystem_Cap_Frescale(MSEBoxModel *bm, FILE *llogfp) {
                 F_rescale = FunctGroupArray[sp].speciesParams[F_restart_id];
             } else {
                 switch (tier) {
-                    case tier0:     // Intentional flow throgh for all these cases
-                    case tier1:
+                    case tier0:     
+                        F_rescale = 1.0;
+                        break;
+                    case tier1:     // Intentional flow throgh for all these cases
                     case tier2:
                     case tier3:
                     case tier4:
