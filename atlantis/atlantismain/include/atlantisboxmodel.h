@@ -1697,8 +1697,10 @@ typedef enum {
 	flag_systcap_sp_id,  /* Ecosystem cap related */
     sp_fishery_deduction_id,
     sp_fishery_expected_catch_id,
+	sp_fishery_expected_catch_step1_id, //needed in intermediate rescaling step
     sp_fishery_pref_id,
     sp_fishery_pref_norm_id,
+	intermediate_scalar,
 	primary_fishery_id, /* Main fishery targeting a group - for use in assessment code */
 	cpue_cdf_poor_r_id, /** number of events for negative binomial cdf for poorer skippers */
     cpue_cdf_poor_p_id, /** probabilty of an event for negative binomial cdf for poorer skippers */

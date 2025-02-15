@@ -1550,12 +1550,12 @@ void Guild_Frescale (MSEBoxModel *bm, FILE *llogfp, int sp) {
 
 void Ecosystem_Cap_Frescale(MSEBoxModel *bm, FILE *llogfp) {
     int sp, nf, nc, cohort, ij, b, k, flagF, tier, er_case, maxstock, mFC_end_age, mFC_start_age, flagfcmpa, sel_curve, stage, basechrt;
-    double max_mFC, F_rescale, FTARG, Bcurr, calcM, survival, Fcurr, calcF, Fstep1, this_mFC, M, est_bias, est_cv, BrefA, BrefB, BrefE, Blim, FrefA, FrefH, FrefLim, Braw, sel, this_expect_catch, sp_fishery_pref_weight, w_inv, tot_w_inv, counter, mFC, mFC_change_scale, mpa_scale, mpa_infringe, Wgt, li, gear_change_scale, this_Num, this_start, this_end, this_Biom, Z_Est, expectF, Catch_Eqn_Denom, orig_expected_catch, excess_ratio, new_expected_catch, rescale_scalar,tot_area, fishable_area;
+    double max_mFC, F_rescale, FTARG, Bcurr, calcM, survival, Fcurr, calcF, Fstep1, this_mFC, M, est_bias, est_cv, BrefA, BrefB, BrefE, Blim, FrefA, FrefH, FrefLim, Braw, sel, this_expect_catch, sp_fishery_pref_weight, max_w, counter, mFC, mFC_change_scale, mpa_scale, mpa_infringe, Wgt, li, gear_change_scale, this_Num, this_start, this_end, this_Biom, Z_Est, expectF, Catch_Eqn_Denom, orig_expected_catch, excess_ratio, expected_catch_step1, initial_scale, expected_catch_step2, intermediate_scale, correction, final_scale, rescale_scalar,tot_area, fishable_area;
     //double calcM;
     
     /* Initialise weights if has not been done previously */
     if (!bm->sp_pref_inv_norm_done) {
-        tot_w_inv = 0.0;
+        max_w = 0.0;
         for (sp = 0; sp < bm->K_num_tot_sp; sp++) {
             if (FunctGroupArray[sp].isFished == TRUE) {
                 
@@ -1566,16 +1566,17 @@ void Ecosystem_Cap_Frescale(MSEBoxModel *bm, FILE *llogfp) {
                 /* Weigths on each species - (e.g., as set by Council)  - with 1 is the least important, n > 1 more  important */
                 sp_fishery_pref_weight = FunctGroupArray[sp].speciesParams[sp_fishery_pref_id];
                 
-                /* Use inverse weights to attribute a share of the excess to each stock */
-                w_inv = 1.0 / sp_fishery_pref_weight;
-                tot_w_inv += w_inv;
+                /* get max w for rescaling below */
+                if(sp_fishery_pref_weight > max_w){
+                    max_w = sp_fishery_pref_weight;
+                }
 
                 //fprintf(llogfp, "CHECKPOINT 1\n");
-                fprintf(llogfp, "OY DEBUG 1: Time: %e %s sp_fishery_pref_weight: %e, w_inv: %e, tot_w_inv: %e\n", bm->dayt, FunctGroupArray[sp].groupCode, sp_fishery_pref_weight, w_inv, tot_w_inv);
+                fprintf(llogfp, "OY DEBUG 1: Time: %e %s sp_fishery_pref_weight: %e, tot_w: %e\n", bm->dayt, FunctGroupArray[sp].groupCode, sp_fishery_pref_weight, max_w);
             }
         }
 
-        /* Normalize w_inv */
+        /* Rescale w 0-1 for second step of the OY rescaling */
         for (sp = 0; sp < bm->K_num_tot_sp; sp++) {
             if (FunctGroupArray[sp].isFished == TRUE) {
                 
@@ -1584,11 +1585,10 @@ void Ecosystem_Cap_Frescale(MSEBoxModel *bm, FILE *llogfp) {
                     continue;
                 
                 sp_fishery_pref_weight = FunctGroupArray[sp].speciesParams[sp_fishery_pref_id];
-                w_inv = 1.0 / sp_fishery_pref_weight;
-                FunctGroupArray[sp].speciesParams[sp_fishery_pref_norm_id] = w_inv / tot_w_inv;
+                FunctGroupArray[sp].speciesParams[sp_fishery_pref_norm_id] = sp_fishery_pref_weight / max_w;
 
                 //fprintf(llogfp, "CHECKPOINT 2\n");
-                fprintf(llogfp, "OY DEBUG 2: Time: %e %s sp_fishery_pref_weight: %e, w_inv: %e, norm_weight: %e\n", bm->dayt, FunctGroupArray[sp].groupCode, sp_fishery_pref_weight, w_inv, FunctGroupArray[sp].speciesParams[sp_fishery_pref_norm_id]);
+                fprintf(llogfp, "OY DEBUG 2: Time: %e %s sp_fishery_pref_weight: %e, w_inv: %e, norm_weight: %e\n", bm->dayt, FunctGroupArray[sp].groupCode, sp_fishery_pref_weight, FunctGroupArray[sp].speciesParams[sp_fishery_pref_norm_id]);
 
             }
         }
@@ -2054,8 +2054,88 @@ void Ecosystem_Cap_Frescale(MSEBoxModel *bm, FILE *llogfp) {
     }
     
     /* Compare tot_expect_catch vs the total system expected catch - if in excess then rescale using preferential weighting */
+    // Approach in 3 steps
     double final_expected_catch = 0;
+    if (tot_expect_catch > bm->Ecosystm_Cap_tonnes ) {
 
+        excess_ratio =  bm->Ecosystm_Cap_tonnes / tot_expect_catch;
+
+        //Step 1: calculate new expected catch as a power function of the weight values
+        //this ensures that the first rescaling can be arbitrarily small for species that have high value
+        double tot_expected_catch_step1=0;
+        for (sp = 0; sp < bm->K_num_tot_sp; sp++) {
+            expected_catch_step1 = 0; //reset to 0 for each species
+            if (FunctGroupArray[sp].isFished == TRUE) {
+            
+                // Follow-through for sp that are not part of OY
+                if((!FunctGroupArray[sp].speciesParams[flagFonly_id]) || (!FunctGroupArray[sp].speciesParams[flag_systcap_sp_id]))
+                    continue;
+                // Rescale excess based on these weigths
+                orig_expected_catch = FunctGroupArray[sp].speciesParams[sp_fishery_expected_catch_id];
+                expected_catch_step1 = 0;
+                if (orig_expected_catch) { // only both of expected catch is non-zero
+                    expected_catch_step1 = orig_expected_catch * pow(excess_ratio, (1.0 / FunctGroupArray[sp].speciesParams[sp_fishery_pref_id])); //raw weight for this stock. need to review the weight stuff up top
+                    tot_expected_catch_step1 += expected_catch_step1;
+                }
+                FunctGroupArray[sp].speciesParams[sp_fishery_expected_catch_step1_id] = expected_catch_step1;
+            }
+
+            fprintf(llogfp, "OY DEBUG 10: Time: %e %s, excess_ratio: %e, orig_expected_catch: %e, expected_catch_step1: %e, tot_expected_catch_step1: %e\n", 
+            bm->dayt, FunctGroupArray[sp].groupCode, excess_ratio, orig_expected_catch, expected_catch_step1, tot_expected_catch_step1);
+        
+        }
+
+        //Calculate the initial scaling factor as ratio between the cap and the total new weight-based expected catch
+        initial_scale = bm->Ecosystm_Cap_tonnes / tot_expected_catch_step1;
+
+        //Step 2: calculate an intermediate scaling factor based on the rescaled weights
+        // this keeps high-value stocks untouched. Intermediate scaling = 1 for the highest weight stock
+        double tot_expected_catch_step2=0;
+        for (sp = 0; sp < bm->K_num_tot_sp; sp++) {
+
+            if (FunctGroupArray[sp].isFished == TRUE) {
+            //Calculate intermediate scaling factors as weighted combo of 1 and initial_scale
+            intermediate_scale = FunctGroupArray[sp].speciesParams[sp_fishery_pref_norm_id] * 1 + (1 - FunctGroupArray[sp].speciesParams[sp_fishery_pref_norm_id]) * initial_scale; //initial_scales indexed by species
+            FunctGroupArray[sp].speciesParams[intermediate_scalar] = intermediate_scale;
+            
+            //Apply intermediate scaling
+            expected_catch_step2 = FunctGroupArray[sp].speciesParams[sp_fishery_expected_catch_step1_id] * intermediate_scale;
+            tot_expected_catch_step2 += expected_catch_step2;
+
+            fprintf(llogfp, "OY DEBUG 11: Time: %e %s, initial_scale: %e, intermediate_scale: %e, expected_catch_step2: %e, tot_expected_catch_step2: %e\n", 
+                bm->dayt, FunctGroupArray[sp].groupCode, initial_scale, intermediate_scale, expected_catch_step2, tot_expected_catch_step2);
+            
+            }
+        }
+
+        // Step 3: this ensures that the total catch will stay below the cap
+        correction = bm->Ecosystm_Cap_tonnes / tot_expected_catch_step2;
+        for (sp = 0; sp < bm->K_num_tot_sp; sp++) {
+
+            if (FunctGroupArray[sp].isFished == TRUE) {
+
+                // Follow-through for sp that are not part of OY
+            if((!FunctGroupArray[sp].speciesParams[flagFonly_id]) || (!FunctGroupArray[sp].speciesParams[flag_systcap_sp_id]))
+            continue;
+
+            final_scale = FunctGroupArray[sp].speciesParams[intermediate_scalar] * correction;
+
+            final_expected_catch = final_scale * FunctGroupArray[sp].speciesParams[sp_fishery_expected_catch_step1_id];
+            rescale_scalar = (final_expected_catch / FunctGroupArray[sp].speciesParams[sp_fishery_expected_catch_id]); //get the final F scalar
+
+                for (nf = 0; nf < bm->K_num_fisheries; nf++) {
+                    bm->SP_FISHERYprms[sp][nf][orig_mFC_scale_id] = bm->SP_FISHERYprms[sp][nf][mFC_scale_id]; // For reporting purposes
+                    bm->SP_FISHERYprms[sp][nf][mFC_scale_id] *= rescale_scalar;
+
+                    //fprintf(llogfp, "CHECKPOINT 11\n");
+                    fprintf(llogfp, "OY DEBUG 12: Time: %e %s %s, correction: %e, final_scale: %e, final_expected_catch: %e, rescale_scalar: %e, orig_F_rescale: %e, new_F_rescale: %e\n", 
+                    bm->dayt, FunctGroupArray[sp].groupCode, FisheryArray[nf].fisheryCode, correction, final_scale, final_expected_catch, rescale_scalar, bm->SP_FISHERYprms[sp][nf][orig_mFC_scale_id], bm->SP_FISHERYprms[sp][nf][mFC_scale_id]);
+                } 
+            }
+        }
+    }
+
+    /* ALBI TESTING NEW METHOD IN 2 STEPS
     if (tot_expect_catch > bm->Ecosystm_Cap_tonnes ) {
         excess_ratio =  bm->Ecosystm_Cap_tonnes / tot_expect_catch;
 
@@ -2072,7 +2152,7 @@ void Ecosystem_Cap_Frescale(MSEBoxModel *bm, FILE *llogfp) {
                 // Follow-through for sp that are not part of OY
                 if((!FunctGroupArray[sp].speciesParams[flagFonly_id]) || (!FunctGroupArray[sp].speciesParams[flag_systcap_sp_id]))
                     continue;
-                /* Rescale excess based on these weigths * */
+                // Rescale excess based on these weigths
                 orig_expected_catch = FunctGroupArray[sp].speciesParams[sp_fishery_expected_catch_id];
                 if (orig_expected_catch) { // only both of expected catch is non-zero
 
@@ -2110,6 +2190,7 @@ void Ecosystem_Cap_Frescale(MSEBoxModel *bm, FILE *llogfp) {
             }
         }
     }
+    */
     
     /* Write out end result */
     for (sp = 0; sp < bm->K_num_tot_sp; sp++) {
