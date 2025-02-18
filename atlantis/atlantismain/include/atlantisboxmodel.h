@@ -1698,6 +1698,8 @@ typedef enum {
     sp_fishery_deduction_id,
     sp_fishery_expected_catch_id,
 	sp_fishery_expected_catch_step1_id, //needed in intermediate rescaling step
+	sp_fishery_expected_catch_step2_id, //needed in intermediate rescaling step
+	breached_hcr_trigger,
     sp_fishery_pref_id,
     sp_fishery_pref_norm_id,
 	intermediate_scalar,

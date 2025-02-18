@@ -196,7 +196,8 @@ FILE * initCapResultStickFile(MSEBoxModel *bm)
     fprintf(fid,"SpBased_Frescale ");
     fprintf(fid,"PostSystCap_Frescale ");
     fprintf(fid,"OrigExpectedCatch ");
-    fprintf(fid,"Deductions ");
+    fprintf(fid,"ExpectedCatchStep1 ");
+    fprintf(fid,"ExpectedCatchStep2 ");
     fprintf(fid,"\n");
     /* Return file pointer */
     return(fid);
@@ -210,7 +211,7 @@ void WriteAnnCapResultFile(MSEBoxModel *bm, int species, int nf)
     if(annCapResultfp == NULL){
         annCapResultfp = initCapResultStickFile(bm);
     }
-    fprintf(annCapResultfp, "%e %s %s %e %e %e %e\n", bm->dayt, FunctGroupArray[species].groupCode, FisheryArray[nf].fisheryCode, bm->SP_FISHERYprms[species][nf][orig_mFC_scale_id], bm->SP_FISHERYprms[species][nf][mFC_scale_id], FunctGroupArray[species].speciesParams[sp_fishery_expected_catch_id], FunctGroupArray[species].speciesParams[sp_fishery_deduction_id]);
+    fprintf(annCapResultfp, "%e %s %s %e %e %e %e %e\n", bm->dayt, FunctGroupArray[species].groupCode, FisheryArray[nf].fisheryCode, bm->SP_FISHERYprms[species][nf][orig_mFC_scale_id], bm->SP_FISHERYprms[species][nf][mFC_scale_id], FunctGroupArray[species].speciesParams[sp_fishery_expected_catch_id], FunctGroupArray[species].speciesParams[sp_fishery_expected_catch_step1_id], FunctGroupArray[species].speciesParams[sp_fishery_expected_catch_step1_id] * FunctGroupArray[species].speciesParams[intermediate_scalar]);
 }
 
 

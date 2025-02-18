@@ -2115,23 +2115,71 @@ void Ecosystem_Cap_Frescale(MSEBoxModel *bm, FILE *llogfp) {
             if (FunctGroupArray[sp].isFished == TRUE) {
 
                 // Follow-through for sp that are not part of OY
-            if((!FunctGroupArray[sp].speciesParams[flagFonly_id]) || (!FunctGroupArray[sp].speciesParams[flag_systcap_sp_id]))
-            continue;
+                if((!FunctGroupArray[sp].speciesParams[flagFonly_id]) || (!FunctGroupArray[sp].speciesParams[flag_systcap_sp_id]))
+                continue;
 
-            final_scale = FunctGroupArray[sp].speciesParams[intermediate_scalar] * correction;
+                final_scale = FunctGroupArray[sp].speciesParams[intermediate_scalar] * correction;
+                final_expected_catch = final_scale * FunctGroupArray[sp].speciesParams[sp_fishery_expected_catch_step1_id];
+                FunctGroupArray[sp].speciesParams[sp_fishery_expected_catch_step2_id] = final_expected_catch;
 
-            final_expected_catch = final_scale * FunctGroupArray[sp].speciesParams[sp_fishery_expected_catch_step1_id];
+                fprintf(llogfp, "OY DEBUG 12: Time: %e %s, correction: %e, final_scale: %e, final_expected_catch: %e\n", 
+                    bm->dayt, FunctGroupArray[sp].groupCode, correction, final_scale, final_expected_catch);
+            
+            }
+        }
+
+        //Step 4: This approach may lead to catch for some stocks being in excess of what is prescribed by the HCR
+        double excess = 0;
+        double resid_denom = 0;
+        for (sp = 0; sp < bm->K_num_tot_sp; sp++) {
+
+            if (FunctGroupArray[sp].isFished == TRUE) {
+
+                // Follow-through for sp that are not part of OY
+                if((!FunctGroupArray[sp].speciesParams[flagFonly_id]) || (!FunctGroupArray[sp].speciesParams[flag_systcap_sp_id]))
+                continue;
+                
+                final_expected_catch = FunctGroupArray[sp].speciesParams[sp_fishery_expected_catch_step2_id];
+                orig_expected_catch = FunctGroupArray[sp].speciesParams[sp_fishery_expected_catch_id];
+                FunctGroupArray[sp].speciesParams[breached_hcr_trigger] = 0;
+
+                if(final_expected_catch > orig_expected_catch){
+                    FunctGroupArray[sp].speciesParams[breached_hcr_trigger] = 1;
+                    FunctGroupArray[sp].speciesParams[sp_fishery_expected_catch_step2_id] = orig_expected_catch;
+                    excess += (final_expected_catch - orig_expected_catch);
+                }
+                resid_denom += (orig_expected_catch - final_expected_catch);
+
+                fprintf(llogfp, "OY DEBUG 13: Time: %e %s, breach: %e, orig_expected_catch: %e, final_expected_catch: %e, excess: %e, resid_denom: %e\n", 
+                    bm->dayt, FunctGroupArray[sp].groupCode, FunctGroupArray[sp].speciesParams[breached_hcr_trigger], orig_expected_catch, final_expected_catch, excess, resid_denom);
+            
+            }
+        }
+
+        // Step 5: redistribute this excess among the other stocks based on the difference between their original catch and the final catch
+        double w_resid = 0;
+        for (sp = 0; sp < bm->K_num_tot_sp; sp++) {
+            final_expected_catch = FunctGroupArray[sp].speciesParams[sp_fishery_expected_catch_step2_id];
+            orig_expected_catch = FunctGroupArray[sp].speciesParams[sp_fishery_expected_catch_id];
+
+            // Could this cause us to violate the single-species determination again?
+            if(excess && !FunctGroupArray[sp].speciesParams[breached_hcr_trigger]){
+                w_resid = (orig_expected_catch - final_expected_catch) / resid_denom;
+                final_expected_catch = final_expected_catch + (w_resid * excess);
+            }
+            
+            //finally, rescale the mFC scalar
             rescale_scalar = (final_expected_catch / FunctGroupArray[sp].speciesParams[sp_fishery_expected_catch_id]); //get the final F scalar
 
-                for (nf = 0; nf < bm->K_num_fisheries; nf++) {
-                    bm->SP_FISHERYprms[sp][nf][orig_mFC_scale_id] = bm->SP_FISHERYprms[sp][nf][mFC_scale_id]; // For reporting purposes
-                    bm->SP_FISHERYprms[sp][nf][mFC_scale_id] *= rescale_scalar;
+            for (nf = 0; nf < bm->K_num_fisheries; nf++) {
+                bm->SP_FISHERYprms[sp][nf][orig_mFC_scale_id] = bm->SP_FISHERYprms[sp][nf][mFC_scale_id]; // For reporting purposes
+                bm->SP_FISHERYprms[sp][nf][mFC_scale_id] *= rescale_scalar;
 
-                    //fprintf(llogfp, "CHECKPOINT 11\n");
-                    fprintf(llogfp, "OY DEBUG 12: Time: %e %s %s, correction: %e, final_scale: %e, final_expected_catch: %e, rescale_scalar: %e, orig_F_rescale: %e, new_F_rescale: %e\n", 
-                    bm->dayt, FunctGroupArray[sp].groupCode, FisheryArray[nf].fisheryCode, correction, final_scale, final_expected_catch, rescale_scalar, bm->SP_FISHERYprms[sp][nf][orig_mFC_scale_id], bm->SP_FISHERYprms[sp][nf][mFC_scale_id]);
-                } 
-            }
+                //fprintf(llogfp, "CHECKPOINT 11\n");
+                fprintf(llogfp, "OY DEBUG 14: Time: %e %s %s, correction: %e, final_scale: %e, final_expected_catch: %e, rescale_scalar: %e, orig_F_rescale: %e, new_F_rescale: %e\n", 
+                bm->dayt, FunctGroupArray[sp].groupCode, FisheryArray[nf].fisheryCode, correction, final_scale, final_expected_catch, rescale_scalar, bm->SP_FISHERYprms[sp][nf][orig_mFC_scale_id], bm->SP_FISHERYprms[sp][nf][mFC_scale_id]);
+            } 
+            
         }
     }
 
