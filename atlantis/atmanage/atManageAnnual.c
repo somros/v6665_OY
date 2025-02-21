@@ -2094,16 +2094,20 @@ void Ecosystem_Cap_Frescale(MSEBoxModel *bm, FILE *llogfp) {
         for (sp = 0; sp < bm->K_num_tot_sp; sp++) {
 
             if (FunctGroupArray[sp].isFished == TRUE) {
-            //Calculate intermediate scaling factors as weighted combo of 1 and initial_scale
-            intermediate_scale = FunctGroupArray[sp].speciesParams[sp_fishery_pref_norm_id] * 1 + (1 - FunctGroupArray[sp].speciesParams[sp_fishery_pref_norm_id]) * initial_scale; //initial_scales indexed by species
-            FunctGroupArray[sp].speciesParams[intermediate_scalar] = intermediate_scale;
-            
-            //Apply intermediate scaling
-            expected_catch_step2 = FunctGroupArray[sp].speciesParams[sp_fishery_expected_catch_step1_id] * intermediate_scale;
-            tot_expected_catch_step2 += expected_catch_step2;
 
-            fprintf(llogfp, "OY DEBUG 11: Time: %e %s, initial_scale: %e, intermediate_scale: %e, expected_catch_step2: %e, tot_expected_catch_step2: %e\n", 
-                bm->dayt, FunctGroupArray[sp].groupCode, initial_scale, intermediate_scale, expected_catch_step2, tot_expected_catch_step2);
+                // Follow-through for sp that are not part of OY
+                if((!FunctGroupArray[sp].speciesParams[flagFonly_id]) || (!FunctGroupArray[sp].speciesParams[flag_systcap_sp_id]))
+                continue;
+                //Calculate intermediate scaling factors as weighted combo of 1 and initial_scale
+                intermediate_scale = FunctGroupArray[sp].speciesParams[sp_fishery_pref_norm_id] * 1 + (1 - FunctGroupArray[sp].speciesParams[sp_fishery_pref_norm_id]) * initial_scale; //initial_scales indexed by species
+                FunctGroupArray[sp].speciesParams[intermediate_scalar] = intermediate_scale;
+            
+                //Apply intermediate scaling
+                expected_catch_step2 = FunctGroupArray[sp].speciesParams[sp_fishery_expected_catch_step1_id] * intermediate_scale;
+                tot_expected_catch_step2 += expected_catch_step2;
+
+                fprintf(llogfp, "OY DEBUG 11: Time: %e %s, initial_scale: %e, intermediate_scale: %e, expected_catch_step2: %e, tot_expected_catch_step2: %e\n", 
+                    bm->dayt, FunctGroupArray[sp].groupCode, initial_scale, intermediate_scale, expected_catch_step2, tot_expected_catch_step2);
             
             }
         }
@@ -2148,10 +2152,10 @@ void Ecosystem_Cap_Frescale(MSEBoxModel *bm, FILE *llogfp) {
                     FunctGroupArray[sp].speciesParams[sp_fishery_expected_catch_step2_id] = orig_expected_catch;
                     excess += (final_expected_catch - orig_expected_catch);
                 }
-                resid_denom += (orig_expected_catch - final_expected_catch);
+                resid_denom += (orig_expected_catch - FunctGroupArray[sp].speciesParams[sp_fishery_expected_catch_step2_id]);
 
                 fprintf(llogfp, "OY DEBUG 13: Time: %e %s, breach: %e, orig_expected_catch: %e, final_expected_catch: %e, excess: %e, resid_denom: %e\n", 
-                    bm->dayt, FunctGroupArray[sp].groupCode, FunctGroupArray[sp].speciesParams[breached_hcr_trigger], orig_expected_catch, final_expected_catch, excess, resid_denom);
+                    bm->dayt, FunctGroupArray[sp].groupCode, FunctGroupArray[sp].speciesParams[breached_hcr_trigger], orig_expected_catch, FunctGroupArray[sp].speciesParams[sp_fishery_expected_catch_step2_id], excess, resid_denom);
             
             }
         }
@@ -2178,6 +2182,11 @@ void Ecosystem_Cap_Frescale(MSEBoxModel *bm, FILE *llogfp) {
                 //finally, rescale the mFC scalar
                 rescale_scalar = (final_expected_catch / FunctGroupArray[sp].speciesParams[sp_fishery_expected_catch_id]); //get the final F scalar
 
+                // make sure we escape division by 0
+                if(!_finite(rescale_scalar)){
+                    rescale_scalar = 0;
+                }
+                
                 for (nf = 0; nf < bm->K_num_fisheries; nf++) {
                     bm->SP_FISHERYprms[sp][nf][orig_mFC_scale_id] = bm->SP_FISHERYprms[sp][nf][mFC_scale_id]; // For reporting purposes
                     bm->SP_FISHERYprms[sp][nf][mFC_scale_id] *= rescale_scalar;
