@@ -2054,14 +2054,14 @@ void Ecosystem_Cap_Frescale(MSEBoxModel *bm, FILE *llogfp) {
     }
     
     /* Compare tot_expect_catch vs the total system expected catch - if in excess then rescale using preferential weighting */
-    // Approach in 3 steps
     double final_expected_catch = 0;
     if (tot_expect_catch > bm->Ecosystm_Cap_tonnes ) {
 
+        // AR: Adding comments throughout to map the steps here to the steps outlined in the methods document
+        //  # 1. Calculate the first reduction factor r1. This calculates the initial reduction factor based on the ratio of the cap to the sum of all projected catches (i.e., how much in excess of the cap are we?).
+        // excess_ratio = r1 in shiny app
         excess_ratio =  bm->Ecosystm_Cap_tonnes / tot_expect_catch;
 
-        //Step 1: calculate new expected catch as a power function of the weight values
-        //this ensures that the first rescaling can be arbitrarily small for species that have high value
         double tot_expected_catch_step1=0;
         for (sp = 0; sp < bm->K_num_tot_sp; sp++) {
             expected_catch_step1 = 0; //reset to 0 for each species
@@ -2070,14 +2070,15 @@ void Ecosystem_Cap_Frescale(MSEBoxModel *bm, FILE *llogfp) {
                 // Follow-through for sp that are not part of OY
                 if((!FunctGroupArray[sp].speciesParams[flagFonly_id]) || (!FunctGroupArray[sp].speciesParams[flag_systcap_sp_id]))
                     continue;
-                // Rescale excess based on these weigths
                 orig_expected_catch = FunctGroupArray[sp].speciesParams[sp_fishery_expected_catch_id];
                 expected_catch_step1 = 0;
                 if (orig_expected_catch) { // only both of expected catch is non-zero
+                    //   # 2. Calculate the first scaling factor s1. This scalar will preserve the catch values for high-value stocks by applying a weighted power transformation.
+                    //   # 3. Perform the first catch adjustment. At this point we may still be in excess of the OY cap.
                     expected_catch_step1 = orig_expected_catch * pow(excess_ratio, (1.0 / FunctGroupArray[sp].speciesParams[sp_fishery_pref_id])); //raw weight for this stock. need to review the weight stuff up top
                     tot_expected_catch_step1 += expected_catch_step1;
                 }
-                FunctGroupArray[sp].speciesParams[sp_fishery_expected_catch_step1_id] = expected_catch_step1;
+                FunctGroupArray[sp].speciesParams[sp_fishery_expected_catch_step1_id] = expected_catch_step1; // this is abc_1
             }
 
             fprintf(llogfp, "OY DEBUG 10: Time: %e %s, excess_ratio: %e, orig_expected_catch: %e, expected_catch_step1: %e, tot_expected_catch_step1: %e\n", 
@@ -2085,11 +2086,10 @@ void Ecosystem_Cap_Frescale(MSEBoxModel *bm, FILE *llogfp) {
         
         }
 
-        //Calculate the initial scaling factor as ratio between the cap and the total new weight-based expected catch
+        //  # 4.	Calculate the second reduction factor r2. This determines how much further adjustment is still needed after the first adjustment.
+        // initial_scale = r2
         initial_scale = bm->Ecosystm_Cap_tonnes / tot_expected_catch_step1;
 
-        //Step 2: calculate an intermediate scaling factor based on the rescaled weights
-        // this keeps high-value stocks untouched. Intermediate scaling = 1 for the highest weight stock
         double tot_expected_catch_step2=0;
         for (sp = 0; sp < bm->K_num_tot_sp; sp++) {
 
@@ -2098,12 +2098,14 @@ void Ecosystem_Cap_Frescale(MSEBoxModel *bm, FILE *llogfp) {
                 // Follow-through for sp that are not part of OY
                 if((!FunctGroupArray[sp].speciesParams[flagFonly_id]) || (!FunctGroupArray[sp].speciesParams[flag_systcap_sp_id]))
                 continue;
-                //Calculate intermediate scaling factors as weighted combo of 1 and initial_scale
-                intermediate_scale = FunctGroupArray[sp].speciesParams[sp_fishery_pref_norm_id] * 1 + (1 - FunctGroupArray[sp].speciesParams[sp_fishery_pref_norm_id]) * initial_scale; //initial_scales indexed by species
+                //  # 5. 	Calculate the second scaling factor s2. First, scale the weights to 0-1 range (this is done above)
+                //   # This standardizes the weights relative to the maximum weight value. It is done so that the most valuable stock has a weight of 1. Then compute s_2:
+                //   # This creates a stock-specific scaling factor as a weighted combination of 1 and the second reduction factor r_2. For the highest-value stock, this ensures minimal rescaling (though we still need to comply with r_2).
+                intermediate_scale = FunctGroupArray[sp].speciesParams[sp_fishery_pref_norm_id] + (1 - FunctGroupArray[sp].speciesParams[sp_fishery_pref_norm_id]) * initial_scale; //initial_scales indexed by species
                 FunctGroupArray[sp].speciesParams[intermediate_scalar] = intermediate_scale;
             
-                //Apply intermediate scaling
-                expected_catch_step2 = FunctGroupArray[sp].speciesParams[sp_fishery_expected_catch_step1_id] * intermediate_scale;
+                //  # 6.	Perform the second catch adjustment. Note that ABC_2 is an intermediate quantity used to compute the third and final reduction factor.
+                expected_catch_step2 = FunctGroupArray[sp].speciesParams[sp_fishery_expected_catch_step1_id] * intermediate_scale; //this is abc_2
                 tot_expected_catch_step2 += expected_catch_step2;
 
                 fprintf(llogfp, "OY DEBUG 11: Time: %e %s, initial_scale: %e, intermediate_scale: %e, expected_catch_step2: %e, tot_expected_catch_step2: %e\n", 
@@ -2112,7 +2114,8 @@ void Ecosystem_Cap_Frescale(MSEBoxModel *bm, FILE *llogfp) {
             }
         }
 
-        // Step 3: this ensures that the total catch will stay below the cap
+        //   # 7. Calculate the third reduction factor r_3 and scaling factor s_3. This will ensure that the total catch remains under the cap after the previous adjustments by performing stock-specific adjustments.
+        // correction = r_3
         correction = bm->Ecosystm_Cap_tonnes / tot_expected_catch_step2;
         for (sp = 0; sp < bm->K_num_tot_sp; sp++) {
 
@@ -2122,8 +2125,11 @@ void Ecosystem_Cap_Frescale(MSEBoxModel *bm, FILE *llogfp) {
                 if((!FunctGroupArray[sp].speciesParams[flagFonly_id]) || (!FunctGroupArray[sp].speciesParams[flag_systcap_sp_id]))
                 continue;
 
+                // final_scale = r_3
                 final_scale = FunctGroupArray[sp].speciesParams[intermediate_scalar] * correction;
-                final_expected_catch = final_scale * FunctGroupArray[sp].speciesParams[sp_fishery_expected_catch_step1_id];
+                //   # 8.	Perform the third catch adjustment:
+                // final_exepected_catch = abc_3
+                final_expected_catch = final_scale * FunctGroupArray[sp].speciesParams[sp_fishery_expected_catch_step1_id]; 
                 FunctGroupArray[sp].speciesParams[sp_fishery_expected_catch_step2_id] = final_expected_catch;
 
                 fprintf(llogfp, "OY DEBUG 12: Time: %e %s, correction: %e, final_scale: %e, final_expected_catch: %e\n", 
@@ -2132,7 +2138,14 @@ void Ecosystem_Cap_Frescale(MSEBoxModel *bm, FILE *llogfp) {
             }
         }
 
-        //Step 4: This approach may lead to catch for some stocks being in excess of what is prescribed by the HCR
+        /*  # 9. 	At this point the aggregate ABC_3 should be at the cap. 
+        However, one remaining issue for some combinations of w (and depending on stock status) is that the previous steps 
+        may have caused some upscaling of the original ABC values. 
+        This would be a violation of the single-species catch allocation step that precedes the OY rescaling 
+        (particularly problematic for stocks that are managed with an HCR). 
+        This step constrains the projected catch to not exceed original ABC. 
+        We also need to keep track of any leftover unallocated catch E that may results from deducting the ABC in excess in this step:*/
+
         double excess = 0;
         double resid_denom = 0;
         for (sp = 0; sp < bm->K_num_tot_sp; sp++) {
@@ -2148,7 +2161,7 @@ void Ecosystem_Cap_Frescale(MSEBoxModel *bm, FILE *llogfp) {
                 FunctGroupArray[sp].speciesParams[breached_hcr_trigger] = 0;
 
                 if(final_expected_catch > orig_expected_catch){
-                    FunctGroupArray[sp].speciesParams[breached_hcr_trigger] = 1;
+                    FunctGroupArray[sp].speciesParams[breached_hcr_trigger] = 1; // need to keep track of which stocks breached the HCR allocation, so that we do not redistribute the skimmed excess to these but only to the other stocks
                     FunctGroupArray[sp].speciesParams[sp_fishery_expected_catch_step2_id] = orig_expected_catch;
                     excess += (final_expected_catch - orig_expected_catch);
                 }
@@ -2160,7 +2173,7 @@ void Ecosystem_Cap_Frescale(MSEBoxModel *bm, FILE *llogfp) {
             }
         }
 
-        // Step 5: redistribute this excess among the other stocks based on the difference between their original catch and the final catch
+        //   # 10. This last step is only executed if the previous steps have led to E>0. Redistribute E among the other stocks based on their original ABC (i.e., stocks that had larger ABC to absorb more of the excess):
         double w_resid = 0;
         for (sp = 0; sp < bm->K_num_tot_sp; sp++) {
 
@@ -2173,13 +2186,13 @@ void Ecosystem_Cap_Frescale(MSEBoxModel *bm, FILE *llogfp) {
                 final_expected_catch = FunctGroupArray[sp].speciesParams[sp_fishery_expected_catch_step2_id];
                 orig_expected_catch = FunctGroupArray[sp].speciesParams[sp_fishery_expected_catch_id];
 
-                // Could this cause us to violate the single-species determination again?
+                // only do it for stocks that did not breach the HCR, and only if there is an excess
                 if(excess && !FunctGroupArray[sp].speciesParams[breached_hcr_trigger]){
                     w_resid = (orig_expected_catch - final_expected_catch) / resid_denom;
                     final_expected_catch = final_expected_catch + (w_resid * excess);
                 }
             
-                //finally, rescale the mFC scalar
+                //  # 11. Scalar on fishing mortality calculation:
                 rescale_scalar = (final_expected_catch / FunctGroupArray[sp].speciesParams[sp_fishery_expected_catch_id]); //get the final F scalar
 
                 // make sure we escape division by 0
