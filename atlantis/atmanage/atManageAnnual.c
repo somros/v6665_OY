@@ -1554,6 +1554,8 @@ void Ecosystem_Cap_Frescale(MSEBoxModel *bm, FILE *llogfp) {
     //double calcM;
     
     /* Initialise weights if has not been done previously */
+    //ALBI: not needed with the bisection approach
+    /*
     if (!bm->sp_pref_inv_norm_done) {
         max_w = 0.0;
         for (sp = 0; sp < bm->K_num_tot_sp; sp++) {
@@ -1563,10 +1565,10 @@ void Ecosystem_Cap_Frescale(MSEBoxModel *bm, FILE *llogfp) {
                 if((!FunctGroupArray[sp].speciesParams[flagFonly_id]) || (!FunctGroupArray[sp].speciesParams[flag_systcap_sp_id]))
                     continue;
                 
-                /* Weigths on each species - (e.g., as set by Council)  - with 1 is the least important, n > 1 more  important */
+                //Weigths on each species - (e.g., as set by Council)  - with 1 is the least important, n > 1 more  important
                 sp_fishery_pref_weight = FunctGroupArray[sp].speciesParams[sp_fishery_pref_id];
                 
-                /* get max w for rescaling below */
+                //get max w for rescaling below
                 if(sp_fishery_pref_weight > max_w){
                     max_w = sp_fishery_pref_weight;
                 }
@@ -1576,7 +1578,7 @@ void Ecosystem_Cap_Frescale(MSEBoxModel *bm, FILE *llogfp) {
             }
         }
 
-        /* Rescale w 0-1 for second step of the OY rescaling */
+        //Rescale w 0-1 for second step of the OY rescaling
         for (sp = 0; sp < bm->K_num_tot_sp; sp++) {
             if (FunctGroupArray[sp].isFished == TRUE) {
                 
@@ -1594,6 +1596,7 @@ void Ecosystem_Cap_Frescale(MSEBoxModel *bm, FILE *llogfp) {
         }
         bm->sp_pref_inv_norm_done = 1;
     }
+    */
     
     /* Prep the mpa calcs needed - as required per fleet not species so do up front - only update if need to */
     
@@ -2053,7 +2056,162 @@ void Ecosystem_Cap_Frescale(MSEBoxModel *bm, FILE *llogfp) {
         }
     }
     
+    
     /* Compare tot_expect_catch vs the total system expected catch - if in excess then rescale using preferential weighting */
+    double final_expected_catch = 0;
+    if (tot_expect_catch > bm->Ecosystm_Cap_tonnes) {
+
+        // Define variables for the bisection method
+        double a = 0.0;               // Lower bound for bisection
+        double b = 10.0;              // Upper bound for bisection
+        double tol = 1e-7;            // Tolerance for bisection
+        int max_iter = 100;           // Maximum iterations
+        int iter = 0;                 // Iteration counter
+        double optimal_mult = 0.0;    // The optimal multiplier we will find
+        int sp_iter;                  // Loop variable for species inside the bisection method
+        
+        // Initial ratio of cap to total catch
+        double r = bm->Ecosystm_Cap_tonnes / tot_expect_catch;
+        
+        fprintf(llogfp, "OY BISECTION: Time: %e Starting bisection method, cap: %e, tot_expect_catch: %e, r: %e\n", 
+                bm->dayt, bm->Ecosystm_Cap_tonnes, tot_expect_catch, r);
+        
+        // Bisection method to find optimal multiplier
+        while ((b - a) > tol && iter < max_iter) {
+            double c = (a + b) / 2.0;  // Calculate midpoint
+            double h = (tol * 10.0 > (b - a) / 100.0) ? tol * 10.0 : (b - a) / 100.0;  // Step size for numerical derivative
+            
+            // Calculate function values for derivative
+            double sum_plus_h = 0.0;
+            double sum_minus_h = 0.0;
+            double orig_catch, r_scaled_plus, r_scaled_minus;
+            
+            // Calculate sum for c+h and c-h
+            for (sp_iter = 0; sp_iter < bm->K_num_tot_sp; sp_iter++) {
+                if (FunctGroupArray[sp_iter].isFished == TRUE) {
+                    // Skip species not part of OY
+                    if((!FunctGroupArray[sp_iter].speciesParams[flagFonly_id]) || 
+                    (!FunctGroupArray[sp_iter].speciesParams[flag_systcap_sp_id]))
+                        continue;
+                    
+                    orig_catch = FunctGroupArray[sp_iter].speciesParams[sp_fishery_expected_catch_id];
+                    if (orig_catch) {
+                        // Calculate rescaled catch for c+h
+                        r_scaled_plus = pow(r, 1.0 / (FunctGroupArray[sp_iter].speciesParams[sp_fishery_pref_id] * (c + h)));
+                        sum_plus_h += orig_catch * r_scaled_plus;
+                        
+                        // Calculate rescaled catch for c-h
+                        r_scaled_minus = pow(r, 1.0 / (FunctGroupArray[sp_iter].speciesParams[sp_fishery_pref_id] * (c - h)));
+                        sum_minus_h += orig_catch * r_scaled_minus;
+                    }
+                }
+            }
+            
+            // Calculate objective function values (squared difference between cap and sum)
+            double f_plus = pow(bm->Ecosystm_Cap_tonnes - sum_plus_h, 2);
+            double f_minus = pow(bm->Ecosystm_Cap_tonnes - sum_minus_h, 2);
+            
+            // Numerical derivative using central difference approximation
+            double deriv_c = (f_plus - f_minus) / (2.0 * h);
+            
+            fprintf(llogfp, "OY BISECTION ITER: Time: %e iter: %d, a: %e, b: %e, c: %e, sum_plus_h: %e, sum_minus_h: %e, deriv_c: %e\n", 
+                    bm->dayt, iter, a, b, c, sum_plus_h, sum_minus_h, deriv_c);
+            
+            // Check if we've found a stationary point (derivative close to zero)
+            if (fabs(deriv_c) < tol) {
+                optimal_mult = c;
+                break;
+            } else if (deriv_c > 0) {
+                // Function is increasing, move left (minimum is to the left)
+                b = c;
+            } else {
+                // Function is decreasing, move right (minimum is to the right)
+                a = c;
+            }
+            
+            iter++;
+        }
+        
+        // If we exited the loop without breaking, set optimal_mult to the midpoint
+        if (iter >= max_iter) {
+            optimal_mult = (a + b) / 2.0;
+        }
+        
+        fprintf(llogfp, "OY BISECTION RESULT: Time: %e Final optimal_mult: %e after %d iterations\n", 
+                bm->dayt, optimal_mult, iter);
+        
+        // Now apply the optimal multiplier to calculate the final rescaling factors
+        for (sp = 0; sp < bm->K_num_tot_sp; sp++) {
+            if (FunctGroupArray[sp].isFished == TRUE) {
+                // Follow-through for sp that are not part of OY
+                if((!FunctGroupArray[sp].speciesParams[flagFonly_id]) || 
+                (!FunctGroupArray[sp].speciesParams[flag_systcap_sp_id]))
+                    continue;
+                
+                orig_expected_catch = FunctGroupArray[sp].speciesParams[sp_fishery_expected_catch_id];
+                if (orig_expected_catch) {
+                    // Calculate the rescaling factor using optimal_mult
+                    double r_scaled = pow(r, 1.0 / (FunctGroupArray[sp].speciesParams[sp_fishery_pref_id] * optimal_mult));
+                    
+                    // Calculate final expected catch
+                    final_expected_catch = orig_expected_catch * r_scaled;
+                    
+                    // Store intermediate values for reporting (similar to the original code structure)
+                    FunctGroupArray[sp].speciesParams[sp_fishery_expected_catch_step1_id] = orig_expected_catch;
+                    FunctGroupArray[sp].speciesParams[sp_fishery_expected_catch_step2_id] = final_expected_catch;
+                    FunctGroupArray[sp].speciesParams[intermediate_scalar] = r_scaled;
+                    
+                    // Calculate rescale scalar (f_rescale in R)
+                    rescale_scalar = final_expected_catch / orig_expected_catch;
+                    
+                    // Make sure we escape division by 0
+                    if (!_finite(rescale_scalar)) {
+                        rescale_scalar = 0;
+                    }
+                    
+                    // Apply rescaling to fishing mortality
+                    for (nf = 0; nf < bm->K_num_fisheries; nf++) {
+                        bm->SP_FISHERYprms[sp][nf][orig_mFC_scale_id] = bm->SP_FISHERYprms[sp][nf][mFC_scale_id]; // For reporting purposes
+                        bm->SP_FISHERYprms[sp][nf][mFC_scale_id] *= rescale_scalar;
+                        
+                        fprintf(llogfp, "OY BISECTION APPLY: Time: %e %s %s, optimal_mult: %e, r: %e, r_scaled: %e, orig_catch: %e, final_catch: %e, rescale_scalar: %e\n", 
+                                bm->dayt, FunctGroupArray[sp].groupCode, FisheryArray[nf].fisheryCode, 
+                                optimal_mult, r, r_scaled, 
+                                orig_expected_catch, final_expected_catch, rescale_scalar);
+                    }
+                }
+            }
+        }
+    } else {
+        // If total expected catch doesn't exceed the cap, no rescaling needed
+        fprintf(llogfp, "OY BISECTION: Time: %e No rescaling needed, tot_expect_catch: %e <= cap: %e\n", 
+                bm->dayt, tot_expect_catch, bm->Ecosystm_Cap_tonnes);
+        
+        // Set rescale_scalar = 1.0 for all species (no change to fishing mortality)
+        for (sp = 0; sp < bm->K_num_tot_sp; sp++) {
+            if (FunctGroupArray[sp].isFished == TRUE) {
+                // Skip species not part of OY
+                if((!FunctGroupArray[sp].speciesParams[flagFonly_id]) || 
+                (!FunctGroupArray[sp].speciesParams[flag_systcap_sp_id]))
+                    continue;
+                
+                // Set the final expected catch to the original (no rescaling)
+                orig_expected_catch = FunctGroupArray[sp].speciesParams[sp_fishery_expected_catch_id];
+                FunctGroupArray[sp].speciesParams[sp_fishery_expected_catch_step1_id] = orig_expected_catch;
+                FunctGroupArray[sp].speciesParams[sp_fishery_expected_catch_step2_id] = orig_expected_catch;
+                FunctGroupArray[sp].speciesParams[intermediate_scalar] = 1.0;
+                
+                // Report that no rescaling was applied (rescale_scalar = 1.0)
+                for (nf = 0; nf < bm->K_num_fisheries; nf++) {
+                    // Original fishing mortality is preserved (not changed)
+                    bm->SP_FISHERYprms[sp][nf][orig_mFC_scale_id] = bm->SP_FISHERYprms[sp][nf][mFC_scale_id];
+                }
+            }
+        }
+    }
+    
+    /*
+    // Compare tot_expect_catch vs the total system expected catch - if in excess then rescale using preferential weighting 
     double final_expected_catch = 0;
     if (tot_expect_catch > bm->Ecosystm_Cap_tonnes ) {
 
@@ -2138,13 +2296,13 @@ void Ecosystem_Cap_Frescale(MSEBoxModel *bm, FILE *llogfp) {
             }
         }
 
-        /*  # 9. 	At this point the aggregate ABC_3 should be at the cap. 
-        However, one remaining issue for some combinations of w (and depending on stock status) is that the previous steps 
-        may have caused some upscaling of the original ABC values. 
-        This would be a violation of the single-species catch allocation step that precedes the OY rescaling 
-        (particularly problematic for stocks that are managed with an HCR). 
-        This step constrains the projected catch to not exceed original ABC. 
-        We also need to keep track of any leftover unallocated catch E that may results from deducting the ABC in excess in this step:*/
+        //  # 9. 	At this point the aggregate ABC_3 should be at the cap. 
+        //However, one remaining issue for some combinations of w (and depending on stock status) is that the previous steps 
+        //may have caused some upscaling of the original ABC values. 
+        //This would be a violation of the single-species catch allocation step that precedes the OY rescaling 
+        //(particularly problematic for stocks that are managed with an HCR). 
+        //This step constrains the projected catch to not exceed original ABC. 
+       // We also need to keep track of any leftover unallocated catch E that may results from deducting the ABC in excess in this step:
 
         double excess = 0;
         double resid_denom = 0;
@@ -2211,6 +2369,8 @@ void Ecosystem_Cap_Frescale(MSEBoxModel *bm, FILE *llogfp) {
             }
         }
     }
+
+    */
 
     /* ALBI TESTING NEW METHOD IN 2 STEPS
     if (tot_expect_catch > bm->Ecosystm_Cap_tonnes ) {
