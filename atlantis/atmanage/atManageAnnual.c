@@ -2063,7 +2063,7 @@ void Ecosystem_Cap_Frescale(MSEBoxModel *bm, FILE *llogfp) {
 
         // Define variables for the bisection method
         double a = 0.0;               // Lower bound for bisection
-        double b = 10.0;              // Upper bound for bisection
+        double b = 2.0;              // Upper bound for bisection
         double tol = 1e-7;            // Tolerance for bisection
         int max_iter = 100;           // Maximum iterations
         int iter = 0;                 // Iteration counter
@@ -2133,10 +2133,11 @@ void Ecosystem_Cap_Frescale(MSEBoxModel *bm, FILE *llogfp) {
         }
         
         // If we exited the loop without breaking, set optimal_mult to the midpoint
-        if (iter >= max_iter) {
+        // When bisection method completes, set optimal_mult to final midpoint regardless of why we exited
+        if (iter >= max_iter || fabs(b - a) <= tol) {
             optimal_mult = (a + b) / 2.0;
         }
-        
+
         fprintf(llogfp, "OY BISECTION RESULT: Time: %e Final optimal_mult: %e after %d iterations\n", 
                 bm->dayt, optimal_mult, iter);
         
