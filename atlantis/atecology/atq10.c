@@ -477,6 +477,11 @@ void Apply_Q10_Corrections(MSEBoxModel *bm) {
 
 					FunctGroupArray[sp].scaled_mum[cohort] = FunctGroupArray[sp].scaled_mum[cohort] * growth_scalar;
 
+					//ALBI
+					if(sp == 64){
+						printf("ALBI Time: %e box%d-%d EUP has scalar: %e \n", bm->dayt, bm->current_box, bm->current_layer, growth_scalar);
+					}
+
 
 					if(!(_finite(FunctGroupArray[sp].scaled_C[cohort]))){
 						quit("SP_C is not finite for species %s cohort %d\n", FunctGroupArray[sp].groupCode, cohort);
