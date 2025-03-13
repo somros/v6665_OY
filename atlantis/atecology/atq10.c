@@ -479,7 +479,7 @@ void Apply_Q10_Corrections(MSEBoxModel *bm) {
 
 					//ALBI
 					if(sp == 64){
-						printf("ALBI Time: %e box%d-%d EUP has scalar: %e \n", bm->dayt, bm->current_box, bm->current_layer, growth_scalar);
+						printf("ALBI 1 Time: %e box%d-%d EUP has scalar: %e \n", bm->dayt, bm->current_box, bm->current_layer, growth_scalar);
 					}
 
 
