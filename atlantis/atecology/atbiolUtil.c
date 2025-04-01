@@ -355,9 +355,9 @@ double Ecology_Get_Growth_Scalar(MSEBoxModel *bm, int sp, int cohort){
 			scalar = Get_Group_Scalar(bm, bm->externalBiologyInput, bm->externalBiologyInput->Species_Cohort_Lookup[sp][cohort][GROWTH_INDEX_ID], bm->current_box, bm->current_layer);
 
 			//ALBI
-			if(sp == 64){
-				printf("ALBI 2 Time: %e box%d-%d EUP has scalar: %e,  GROWTH_INDEX_ID: %e \n", bm->dayt, bm->current_box, bm->current_layer, scalar, bm->externalBiologyInput->Species_Cohort_Lookup[sp][cohort][GROWTH_INDEX_ID]);
-			}
+			//if(sp == 64){
+				//printf("ALBI 2 Time: %e box%d-%d EUP has scalar: %e,  GROWTH_INDEX_ID: %e \n", bm->dayt, bm->current_box, bm->current_layer, scalar, bm->externalBiologyInput->Species_Cohort_Lookup[sp][cohort][GROWTH_INDEX_ID]);
+			//}
 			/*if(bm->current_box == 1 && bm->current_layer == 0 && it_count == 1 && sp == 78)
 				fprintf(bm->logFile, "growth rate scalar - time = %f, %s:%d, box %d:%d - scalar = %e,  it_count = %d\n",
 						bm->dayt, FunctGroupArray[sp].groupCode, cohort, bm->current_box, bm->current_layer, scalar, it_count);
