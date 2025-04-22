@@ -1408,7 +1408,7 @@ void Guild_Frescale (MSEBoxModel *bm, FILE *llogfp, int sp) {
     double FrefA = FunctGroupArray[sp].speciesParams[FrefA_id];
     double FrefH = FunctGroupArray[sp].speciesParams[FrefH_id];
     double FrefLim = FunctGroupArray[sp].speciesParams[FrefLim_id];
-    double gamma_par = FunctGroupArray[sp].speciesParams[gamma_par_id];
+    //double gamma_par = FunctGroupArray[sp].speciesParams[gamma_par_id]; //ALBI: not using guild hcr for now in GOA
     
     fprintf(llogfp, "Time: %e doing %s with tier %d\n", bm->dayt, FunctGroupArray[sp].groupCode, tier);
     fprintf(llogfp, "The HCR refernce poitns are as follows:\n");
