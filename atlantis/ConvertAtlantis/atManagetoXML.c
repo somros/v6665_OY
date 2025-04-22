@@ -711,6 +711,7 @@ void TACXML(MSEBoxModel *bm, FILE *fp, char *fileName, xmlDocPtr doc, xmlNodePtr
 	Util_XML_Parse_Create_Node(fp, fileName, childGroupingNode, "targ_refD", "Target reference point - tier4", "", XML_TYPE_FLOAT, "");
 	Util_XML_Parse_Create_Node(fp, fileName, childGroupingNode, "targ_refE", "Target reference point - tier14", "", XML_TYPE_FLOAT, "");
 	Util_XML_Parse_Create_Node(fp, fileName, childGroupingNode, "lim_ref", "Limit reference point", "", XML_TYPE_FLOAT, "");
+	Util_XML_Parse_Create_Node(fp, fileName, childGroupingNode, "gamma_par", "Slope of the RHS for tier15", "", XML_TYPE_FLOAT, "");
 
 	Util_XML_Parse_Create_Node(fp, fileName, childGroupingNode, "forage_refA", "Forage target reference point - tier1", "", XML_TYPE_FLOAT, "");
 	Util_XML_Parse_Create_Node(fp, fileName, childGroupingNode, "forage_refB", "Forage target reference point - tier2", "", XML_TYPE_FLOAT, "");

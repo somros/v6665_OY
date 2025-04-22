@@ -1290,6 +1290,7 @@ typedef enum {
 #define sp_rollover 12
 #define tier13 13
 #define tier14 14
+#define tier15 15
 
 #define orig_tier_rule 1
 #define new_tier_rule 2
@@ -1694,6 +1695,7 @@ typedef enum {
 	BrefD_id,
 	BrefE_id,
 	Blim_id,
+	gamma_par_id,
 	flag_systcap_sp_id,  /* Ecosystem cap related */
     sp_fishery_deduction_id,
     sp_fishery_expected_catch_id,
@@ -4896,6 +4898,7 @@ typedef struct {
 	double targ_refD; /* Target reference point D (e.g. B50) for tiered harvest rules */
 	double targ_refE; /* Target reference point E (e.g. B20) for tiered harvest rules */
 	double lim_ref; /* Limit reference point for assessments and TAC setting */
+	double gamma_par; /*Defines the slope of the RHS for tier15*/
 	double forage_refA; /* Target reference point A (e.g. B48) for forage species in tiered harvest rules */
 	double forage_refB; /* Target reference point B (e.g. B40) for forage species in tiered harvest rules */
 	double forage_refC; /* Target reference point C (e.g. B60) for forage species in tiered harvest rules */

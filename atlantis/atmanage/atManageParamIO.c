@@ -745,6 +745,7 @@ void readTACXML(MSEBoxModel *bm, char *fileName, xmlNodePtr rootnode) {
 	bm->targ_refD = Util_XML_Read_Value(fileName, ATLANTIS_ATTRIBUTE,  bm->ecotest, 1, childGroupingNode, proportion_check, "targ_refD");
 	bm->targ_refE = Util_XML_Read_Value(fileName, ATLANTIS_ATTRIBUTE,  bm->ecotest, 1, childGroupingNode, proportion_check, "targ_refE");
 	bm->lim_ref = Util_XML_Read_Value(fileName, ATLANTIS_ATTRIBUTE,  bm->ecotest, 1, childGroupingNode, proportion_check, "lim_ref");
+	bm->gamma_par = Util_XML_Read_Value(fileName, ATLANTIS_ATTRIBUTE,  bm->ecotest, 1, childGroupingNode, proportion_check, "gamma_par");
 	bm->forage_refA = Util_XML_Read_Value(fileName, ATLANTIS_ATTRIBUTE,  bm->ecotest, 1, childGroupingNode, proportion_check, "forage_refA");
 	bm->forage_refB = Util_XML_Read_Value(fileName, ATLANTIS_ATTRIBUTE,  bm->ecotest, 1, childGroupingNode, proportion_check, "forage_refB");
 	bm->forage_refC = Util_XML_Read_Value(fileName, ATLANTIS_ATTRIBUTE,  bm->ecotest, 1, childGroupingNode, proportion_check, "forage_refC");

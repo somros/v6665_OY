@@ -533,6 +533,7 @@ void Manage_Init(MSEBoxModel *bm, FILE *llogfp) {
 				FunctGroupArray[sp].speciesParams[BrefD_id] = bm->targ_refD;
 				FunctGroupArray[sp].speciesParams[BrefE_id] = bm->targ_refE;
 				FunctGroupArray[sp].speciesParams[Blim_id] = bm->lim_ref;
+				FunctGroupArray[sp].speciesParams[gamma_par_id] = bm->gamma_par;
                 break;
             case byproduct_tier: /* Byproduct species reference points */
                 FunctGroupArray[sp].speciesParams[BrefA_id] = bm->byproduct_refA;
