@@ -1666,7 +1666,7 @@ void Recruit_Migration(MSEBoxModel *bm, int species, int wclayer, int stock_id, 
             for(ngene = 0; ngene < sp_numGeneTypes; ngene++){
                 for (mid = 0; mid < MIGRATION[species].num_in_queue; mid++) {
                     
-                    fprintf(bm->logFile, "Time: %e %s RecruitQueueMatch: %d\n", bm->dayt, FunctGroupArray[species].groupCode, MIGRATION[species].RecruitQueueMatch[mid]);
+                    //fprintf(bm->logFile, "Time: %e %s RecruitQueueMatch: %d\n", bm->dayt, FunctGroupArray[species].groupCode, MIGRATION[species].RecruitQueueMatch[mid]);
                     
                     if (MIGRATION[species].RecruitQueueMatch[mid] > 0) {
                         if (bm->flag_modify_KWSR) {
