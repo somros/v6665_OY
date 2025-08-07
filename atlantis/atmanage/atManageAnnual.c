@@ -1145,6 +1145,7 @@ void Per_Sp_Frescale (MSEBoxModel *bm, FILE *llogfp, int sp) {
     double gamma_par = FunctGroupArray[sp].speciesParams[gamma_par_id];
 
     double Braw, Bcurr;
+    Braw = 0.0;
 
     if(!do_assess) {  // Where do_assess set at atlantismain.c level as requires Assess_Resources() call in atasseess lib
         if (bm->flagSSBforHCR){
@@ -1666,6 +1667,7 @@ void Ecosystem_Cap_Frescale(MSEBoxModel *bm, FILE *llogfp) {
             FrefH = FunctGroupArray[sp].speciesParams[FrefH_id];
             FrefLim = FunctGroupArray[sp].speciesParams[FrefLim_id];
             gamma_par = FunctGroupArray[sp].speciesParams[gamma_par_id];
+            Braw = 0.0;
             
             if(!do_assess) {  // Where do_assess set at atlantismain.c level as requires Assess_Resources() call in atasseess lib
                 if (bm->flagSSBforHCR){
