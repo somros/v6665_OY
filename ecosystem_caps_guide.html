@@ -3278,6 +3278,7 @@ window.Quarto = {
 <section id="overview" class="level2">
 <h2 class="anchored" data-anchor-id="overview">Overview</h2>
 <p>This document describes the implementation of ecosystem caps functionality in Atlantis. The ecosystem cap approach builds on existing fixed fishing mortality (<em>mFC</em>) and harvest control rule (HCR) capabilities, allowing users to model system-level catch constraints similar to the Optimum Yield (OY) cap applied in Alaska groundfish fisheries.</p>
+<p>A functioning version of the Atlantis code implementing the caps is available <a href="https://github.com/somros/v6665_OY/tree/main">here</a>.</p>
 <p>The general idea is to use ecosystem caps on projected catch to derive a scalar that works together with the familiar <code>bm-&gt;SP_FISHERYprms[sp][nf][mFC_scale_id]</code> to rescale <code>mFC</code>.</p>
 <p>The ecosystem cap functionality combines single-species management with user-defined ecosystem-level catch limits. The method consists of three main components:</p>
 <ol type="1">
@@ -3285,7 +3286,21 @@ window.Quarto = {
 <li><strong>Catch projection</strong>: Calculate expected catch for the following year based on projected F and current stock status</li>
 <li><strong>Ecosystem cap rescaling</strong>: If aggregate projected catch exceeds the cap, rescale fishing mortality rates using stock-specific weights</li>
 </ol>
-<p>Most of the calculations occur in file <code>atManageAnnual.c</code>. TO DO: collate changes to other files and list here.</p>
+<p>Most of the calculations occur in file <code>atManageAnnual.c</code>. These are the other files I had to modify:</p>
+<ul>
+<li><code>atHarvestCatch.c</code></li>
+<li><code>atManage.h</code></li>
+<li><code>atManagetoXML.x</code></li>
+<li><code>atManageIO.c</code></li>
+<li><code>atManageParamIO.c</code></li>
+<li><code>atmovement.c</code></li>
+<li><code>atUtilGroupIO.c</code></li>
+<li><code>atlantisboxmodel.h</code></li>
+<li><code>atManageSetup.c</code></li>
+<li><code>atFunctGroup.h</code></li>
+<li><code>atlantismain.c</code></li>
+<li><code>atdemography.c</code></li>
+</ul>
 <p><strong>IMPORTANT NOTES</strong></p>
 <ul>
 <li>This works on v6665 because that’s the code base for Atlantis GOA. The current Atlantis trunk contains an early version of this method that is behind the development version presented here and is currently not functional. The goal will be to port all this back to the trunk eventually.</li>
