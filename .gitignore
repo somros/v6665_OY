@@ -1,0 +1,24 @@
+# Object/archive/binary output
+*.o
+*.a
+atlantis/atlantismain/atlantisMerged
+
+# Dependency tracking
+.deps/
+
+# Autoconf/automake generated build system
+configure
+configure~
+config.h
+config.h.in
+config.h.in~
+config.log
+config.status
+config.guess
+config.sub
+aclocal.m4
+Makefile
+Makefile.in
+autom4te.cache/
+am--include-marker
+\#
